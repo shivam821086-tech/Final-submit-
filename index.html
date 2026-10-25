@@ -45,7 +45,6 @@
     window.dbRemove = remove;
     window.dbOnValue = onValue;
 
-    // Trigger app init once Firebase SDK loads
     window.dispatchEvent(new Event('firebase-ready'));
   </script>
 
@@ -114,7 +113,7 @@
 </head>
 <body class="min-h-screen pb-24 antialiased selection:bg-amber-500 selection:text-black">
 
-  <!-- ================= TOP HERO SECTION ================= -->
+  <!-- TOP HERO SECTION -->
   <header class="relative overflow-hidden border-b border-amber-500/20 bg-gradient-to-b from-[#0a1122] to-[#070B14] py-8 sm:py-12">
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 bg-amber-500/10 blur-[100px] pointer-events-none rounded-full"></div>
     
@@ -131,7 +130,7 @@
 
       <div class="space-y-1">
         <span class="inline-block uppercase tracking-[0.25em] text-xs sm:text-sm font-semibold text-amber-400/90 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
-          Cloud Synchronized • लाइव डेटा सिंक
+          Official Tournament Portal • आधिकारिक टूर्नामेंट
         </span>
         <h1 class="font-cinzel text-3xl sm:text-5xl md:text-6xl font-black gold-gradient-text tracking-wider uppercase mt-2">
           The Royal Arena
@@ -142,7 +141,7 @@
       </div>
 
       <p class="mt-3 text-sm sm:text-base text-gray-300 max-w-xl mx-auto">
-        द रॉयल एरीना - लाइव क्रिकेट टूर्नामेंट पोर्टल। यहाँ दर्ज हर खिलाड़ी का डेटा सुरक्षित रूप से क्लाउड पर सिंक रहता है।
+        द रॉयल एरीना - टाइम टू रूल क्रिकेट टूर्नामेंट के लिए अपना रजिस्ट्रेशन करें। लाइव क्लाउड डेटा सिंक के साथ!
       </p>
 
       <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -150,13 +149,13 @@
           <span>✍️ नया खिलाड़ी जोड़ें</span>
         </a>
         <a href="#squadSection" class="px-5 py-2.5 rounded-xl font-semibold text-amber-300 bg-royal-surfaceDark/80 hover:bg-royal-surfaceDark border border-amber-500/30 text-sm transition">
-          📋 स्क्वाड देखें (<span id="btnTotalCount">0</span>)
+          📋 पंजीकृत स्क्वाड देखें (<span id="btnTotalCount">0</span>)
         </a>
       </div>
     </div>
   </header>
 
-  <!-- ================= MAIN CONTAINER ================= -->
+  <!-- MAIN CONTAINER -->
   <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-10">
 
     <!-- STATS COUNTERS -->
@@ -165,7 +164,7 @@
         <div class="bg-royal-cardDark p-4 rounded-2xl border border-amber-500/30 text-center relative overflow-hidden">
           <div class="text-xs uppercase tracking-wider text-amber-300/80 font-medium">कुल खिलाड़ी (Total)</div>
           <div id="statTotal" class="text-3xl sm:text-4xl font-extrabold text-amber-400 mt-1">0</div>
-          <div class="text-[11px] text-gray-400 mt-0.5">Cloud Connected</div>
+          <div class="text-[11px] text-gray-400 mt-0.5">Cloud Sync Active</div>
         </div>
         <div class="bg-royal-cardDark p-4 rounded-2xl border border-royal-borderDark text-center">
           <div class="text-xs uppercase tracking-wider text-blue-300 font-medium">बल्लेबाज़ (Batsman)</div>
@@ -190,31 +189,31 @@
       </div>
     </section>
 
-    <!-- ================= REGISTRATION FORM SECTION ================= -->
+    <!-- REGISTRATION FORM SECTION -->
     <section id="registerSection" class="relative">
       <div class="bg-royal-cardDark/95 rounded-3xl p-6 sm:p-8 gold-border-glow shadow-2xl relative overflow-hidden backdrop-blur-md">
         
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gray-800 gap-3">
           <div>
-            <span class="text-amber-400 text-xs font-bold uppercase tracking-wider">Fast Player Enrollment</span>
+            <span class="text-amber-400 text-xs font-bold uppercase tracking-wider">Fast & Free Registration</span>
             <h2 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
               <span>खिलाड़ी पंजीकरण फॉर्म</span>
               <span class="text-sm font-normal text-amber-300/70">(Player Entry)</span>
             </h2>
             <p class="text-xs sm:text-sm text-gray-400 mt-1">
-              फोटो सहित या बिना फोटो के खिलाड़ी का रजिस्ट्रेशन तुरंत पूरा करें।
+              कृपया खिलाड़ी का नाम और श्रेणी सही दर्ज करें। फोटो जोड़ना वैकल्पिक है।
             </p>
           </div>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium w-fit">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Cloud Online
+            Registration Open
           </span>
         </div>
 
         <form id="playerRegForm" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             
-            <!-- Photo Upload Box -->
+            <!-- Photo Upload Area -->
             <div class="md:col-span-2 flex flex-col sm:flex-row items-center gap-4 bg-royal-bgDark p-4 rounded-2xl border border-gray-800">
               <div id="photoPreviewContainer" class="w-20 h-20 rounded-xl bg-royal-surfaceDark border border-amber-500/30 flex items-center justify-center overflow-hidden relative flex-shrink-0 shadow-inner">
                 <span id="photoPlaceholderIcon" class="text-2xl">👤</span>
@@ -224,14 +223,13 @@
                 <label class="block text-sm font-semibold text-gray-200">खिलाड़ी की फोटो (वैकल्पिक / Optional)</label>
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                   <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-royal-surfaceDark hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-xs font-semibold transition">
-                    📁 गैलरी से चुनें
+                    📁 फोटो चुनें / कैमरा
                     <input type="file" id="playerPhotoInput" accept="image/*" class="sr-only" onchange="handlePhotoUpload(event)">
                   </label>
                   <button type="button" onclick="clearPhoto()" id="removePhotoBtn" class="hidden px-3 py-2 rounded-xl bg-red-950/40 text-red-400 border border-red-800/40 text-xs font-semibold">
                     हटाएं
                   </button>
                 </div>
-                <p class="text-[11px] text-gray-400">आईडी पास के लिए खिलाड़ी की फोटो अपलोड कर सकते हैं।</p>
               </div>
             </div>
 
@@ -320,7 +318,7 @@
             </div>
           </div>
 
-          <!-- Submit -->
+          <!-- Submit Button -->
           <div class="pt-4 flex flex-col sm:flex-row items-center gap-3">
             <button 
               type="submit" 
@@ -329,7 +327,7 @@
               <span>👑 तुरंत रजिस्टर करें (Register Player)</span>
             </button>
             <span class="text-xs text-gray-400 text-center sm:text-left">
-              डेटा तुरंत क्लाउड डेटाबेस पर लाइव सेव हो जाएगा।
+              सबमिट करते ही खिलाड़ी क्लाउड डेटाबेस पर सेव हो जाएगा।
             </span>
           </div>
         </form>
@@ -337,7 +335,7 @@
       </div>
     </section>
 
-    <!-- ================= SQUAD LIST ================= -->
+    <!-- SQUAD LIST SECTION -->
     <section id="squadSection" class="space-y-4">
       
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-royal-cardDark p-5 rounded-2xl border border-gray-800">
@@ -346,7 +344,7 @@
             <span>📋 पंजीकृत खिलाड़ियों की सूची</span>
             <span class="text-xs bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full border border-amber-500/30" id="badgeSquadCount">0 Players</span>
           </h2>
-          <p class="text-xs text-gray-400 mt-0.5">The Royal Arena के सभी क्लाउड रजिस्टर्ड खिलाड़ी</p>
+          <p class="text-xs text-gray-400 mt-0.5">The Royal Arena के सभी रजिस्टर्ड खिलाड़ी</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
@@ -359,6 +357,7 @@
         </div>
       </div>
 
+      <!-- Filters & Search -->
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div class="relative flex-1">
           <input 
@@ -380,6 +379,7 @@
         </div>
       </div>
 
+      <!-- Table View -->
       <div class="bg-royal-cardDark rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -394,7 +394,7 @@
               </tr>
             </thead>
             <tbody id="playerTableBody" class="divide-y divide-gray-800/60 text-sm">
-              <!-- Dynamically populated -->
+              <!-- Dynamically Populated -->
             </tbody>
           </table>
         </div>
@@ -410,7 +410,7 @@
 
   </main>
 
-  <!-- ================= MODAL: DIGITAL PLAYER PASS ================= -->
+  <!-- MODAL: DIGITAL PLAYER ID PASS -->
   <div id="passModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
     <div class="w-full max-w-md my-auto relative animate-in fade-in duration-300">
       
@@ -466,13 +466,13 @@
 
           <div class="flex items-center justify-center gap-2 pt-1 text-[11px] text-emerald-400 font-medium">
             <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-            <span>Verified Official Cloud Entry</span>
+            <span>Verified Official Entry</span>
           </div>
         </div>
 
         <div class="pt-2 flex flex-col gap-2 border-t border-gray-800">
           <div class="flex gap-2">
-            <button type="button" onclick="window.print()" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold text-xs flex items-center justify-center gap-1.5 transition">🖨️ प्रिंट / PDF</button>
+            <button type="button" onclick="window.print()" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold text-xs flex items-center justify-center gap-1.5 transition">🖨️ पास प्रिंट / PDF</button>
             <button type="button" onclick="shareSinglePassWhatsApp()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">📲 व्हाट्सएप</button>
           </div>
           <button type="button" onclick="closePassModal()" class="w-full py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition">बंद करें</button>
@@ -482,7 +482,7 @@
     </div>
   </div>
 
-  <!-- ================= TOAST NOTIFICATION ================= -->
+  <!-- TOAST NOTIFICATION -->
   <div id="toastBox" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
     <div class="bg-royal-cardDark border-2 border-amber-400 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 max-w-sm">
       <div id="toastIcon" class="text-xl">✅</div>
@@ -493,7 +493,7 @@
     </div>
   </div>
 
-  <!-- ================= CUSTOM CONFIRMATION MODAL ================= -->
+  <!-- CUSTOM CONFIRMATION MODAL -->
   <div id="confirmModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-royal-cardDark border border-gray-700 max-w-sm w-full rounded-2xl p-5 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 mx-auto flex items-center justify-center text-xl border border-red-500/20">⚠️</div>
@@ -512,11 +512,11 @@
   <footer class="mt-16 border-t border-gray-800/80 py-8 text-center text-xs text-gray-500">
     <div class="max-w-4xl mx-auto px-4 space-y-2">
       <p class="font-cinzel text-amber-400/80 font-bold tracking-widest uppercase">The Royal Arena: Time to Rule</p>
-      <p>क्लाउड डेटासिंक आधारित डिजिटल रजिस्ट्रेशन सिस्टम।</p>
+      <p>खिलाड़ियों का सही रिकॉर्ड बनाए रखने के लिए डिजिटल रजिस्ट्रेशन सिस्टम।</p>
     </div>
   </footer>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
     let players = [];
     let currentFilter = 'ALL';
@@ -529,7 +529,6 @@
         const data = snapshot.val();
         if (data) {
           players = Object.values(data);
-          // Sort by newest first if possible
           players.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         } else {
           players = [];
@@ -544,7 +543,6 @@
       form.addEventListener('submit', handlePlayerRegistration);
     });
 
-    // Handle Photo Compression
     function handlePhotoUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -591,7 +589,6 @@
       document.getElementById('removePhotoBtn').classList.add('hidden');
     }
 
-    // Register Player
     async function handlePlayerRegistration(e) {
       e.preventDefault();
 
@@ -779,12 +776,11 @@
       if (player) openPassModal(player);
     }
 
-    // ================= PASSWORD PROTECTED DELETE FUNCTION =================
+    // PASSWORD PROTECTED DELETE FUNCTION (PIN: 1234)
     function promptDeletePlayer(id, name) {
-      // यहाँ पासवर्ड सेट है: "1234" (आप अपनी मर्जी से इसे बदल सकते हैं)
       const adminPassword = prompt("🔐 खिलाड़ी को हटाने के लिए एडमिन पासवर्ड दर्ज करें:");
       
-      if (adminPassword === null) return; // कैंसल करने पर
+      if (adminPassword === null) return;
       
       if (adminPassword !== "1234") { 
         showToast("❌ गलत पासवर्ड! खिलाड़ी नहीं हटाया गया।", "⚠️", "सुरक्षा चेतावनी");
