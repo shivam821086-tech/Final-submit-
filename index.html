@@ -1,0 +1,1384 @@
+```html
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>The Royal Arena: Time to Rule - Firebase Cloud Edition</title>
+
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="theme-color" content="#050811">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Royal Arena">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23050811'/><path d='M12 32 L26 76 L74 76 L88 32 L64 56 L50 26 L36 56 Z' fill='%23F59E0B'/><circle cx='50' cy='18' r='7' fill='%23FDE68A'/></svg>">
+  <link id="pwaManifestLink" rel="manifest">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Cinzel & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            royal: {
+              gold: '#F59E0B',
+              goldLight: '#FDE68A',
+              goldDark: '#B45309',
+              goldBorder: '#D97706',
+              bgDark: '#050811',
+              cardDark: '#0C1322',
+              surfaceDark: '#141E34',
+              borderDark: '#26344E'
+            }
+          },
+          fontFamily: {
+            cinzel: ['"Cinzel"', 'serif'],
+            inter: ['"Inter"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #050811;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.15) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(217, 119, 6, 0.10) 0px, transparent 45%);
+      font-family: 'Inter', sans-serif;
+      color: #F8FAFC;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea, select {
+      user-select: text;
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FFFBEB 0%, #FBBF24 50%, #D97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-btn {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s ease;
+    }
+    .gold-btn:active {
+      transform: scale(0.97);
+      background: linear-gradient(135deg, #FBBF24 0%, #B45309 100%);
+    }
+    .gold-border-glow {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    @media print {
+      body * { visibility: hidden !important; }
+      #printPassArea, #printPassArea * { visibility: visible !important; }
+      #printPassArea {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #000 !important;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased pb-28 selection:bg-amber-500 selection:text-black">
+
+  <!-- ================= TOP APP BAR ================= -->
+  <header class="sticky top-0 z-40 bg-[#050811]/95 backdrop-blur-md border-b border-amber-500/20 px-3.5 py-2.5">
+    <div class="max-w-3xl mx-auto flex items-center justify-between">
+      
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-md flex-shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m2 5 3 11h14l3-11-6 6-4-6-4 6-6-6zm3 15h14v2H5z"/>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-cinzel text-sm sm:text-base font-black gold-gradient-text tracking-wider uppercase leading-none">
+              The Royal Arena
+            </h1>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">FIREBASE</span>
+          </div>
+          <p class="font-cinzel text-[9px] text-amber-200/80 font-bold tracking-widest uppercase">
+            Time To Rule • लाइव क्लाउड सिंक
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button 
+          id="btnHeaderInstall" 
+          onclick="triggerPwaInstall()" 
+          class="hidden px-2.5 py-1 rounded-xl bg-amber-500 text-gray-950 font-black text-[11px] flex items-center gap-1 shadow animate-pulse"
+        >
+          <span>📲 ऐप सेव करें</span>
+        </button>
+        <button 
+          onclick="openInstallGuideModal()" 
+          class="px-2.5 py-1.5 rounded-xl bg-royal-cardDark border border-amber-500/30 text-amber-300 flex items-center gap-1 text-[11px] font-bold"
+        >
+          <span>📱</span>
+          <span>गाइड</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= FIREBASE CLOUD STATUS BANNER ================= -->
+  <div class="max-w-3xl mx-auto px-4 pt-2.5 w-full">
+    <div id="cloudStatusBanner" class="bg-gradient-to-r from-emerald-950/40 via-royal-cardDark to-royal-cardDark px-3 py-2 rounded-2xl border border-emerald-500/30 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2">
+        <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
+          <span id="cloudPingAnim" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span id="cloudStatusDot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <div>
+          <span class="text-[11px] font-bold text-emerald-300" id="cloudStatusText">Firebase Realtime Database सिंक सक्रिय है</span>
+          <span class="text-[10px] text-gray-400 block" id="cloudStatusSubtext">डेटा क्लाउड पर सुरक्षित है (Royal Arena Cloud)</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button onclick="forceCloudRefresh()" class="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold hover:bg-emerald-500/30">
+          🔄 सिंक रिफ्रेश
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN CONTENT VIEWPORT ================= -->
+  <main class="flex-1 max-w-3xl w-full mx-auto px-4 py-3 space-y-4">
+
+    <!-- VIEW 1: DASHBOARD -->
+    <section id="viewDashboard" class="space-y-4 tab-view">
+      
+      <div class="bg-gradient-to-br from-[#121c35] via-royal-cardDark to-[#060a14] rounded-3xl p-5 border border-amber-500/30 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-start justify-between">
+          <div>
+            <span class="inline-block text-[10px] font-bold tracking-widest text-amber-300 uppercase px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/30">
+              ⚔️ लाइव क्लाउड टूर्नामेंट पोर्टल ⚔️
+            </span>
+            <h2 class="font-cinzel text-xl sm:text-2xl font-black text-white mt-1.5 leading-snug">
+              The Royal Arena <span class="gold-gradient-text">Cricket</span>
+            </h2>
+            <p class="text-xs text-gray-300 mt-1 max-w-sm">
+              क्लाउड सिंक के साथ खिलाड़ियों का रजिस्ट्रेशन, डिजिटल पास और टीम डिवाइडर।
+            </p>
+          </div>
+          <span class="text-4xl">👑</span>
+        </div>
+
+        <div class="mt-4 pt-3.5 border-t border-gray-800/80 flex flex-wrap items-center justify-between gap-2">
+          <button onclick="switchTab('tabRegister')" class="gold-btn px-4 py-2 rounded-xl text-black font-black text-xs flex items-center gap-1.5">
+            <span>✍️ नया खिलाड़ी जोड़ें</span>
+          </button>
+          <button onclick="shareSquadWhatsApp()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shadow">
+            <span>💬 व्हाट्सएप शेयर</span>
+          </button>
+          <button onclick="switchTab('tabTeams')" class="px-3.5 py-2 rounded-xl bg-royal-surfaceDark border border-amber-500/30 text-amber-300 font-bold text-xs">
+            <span>⚖️ टीम डिवाइडर</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Counters -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider">📊 लाइव टूर्नामेंट आँकड़े (Cloud Stats)</h3>
+          <span class="text-[11px] text-amber-400 font-bold" id="badgeTotalPlayers">कुल: 0 खिलाड़ी</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          <div class="bg-royal-cardDark p-3 rounded-2xl border border-amber-500/40 text-center">
+            <div class="text-[10px] text-amber-300 uppercase font-bold">कुल खिलाड़ी</div>
+            <div id="statTotal" class="text-2xl font-black text-amber-400 mt-0.5">0</div>
+            <div class="text-[10px] text-gray-400">Total Players</div>
+          </div>
+          <div class="bg-royal-cardDark p-3 rounded-2xl border border-blue-500/30 text-center">
+            <div class="text-[10px] text-blue-300 uppercase font-bold">बल्लेबाज़</div>
+            <div id="statBatsman" class="text-2xl font-black text-blue-400 mt-0.5">0</div>
+            <div class="text-[10px] text-gray-400">🏏 Batters</div>
+          </div>
+          <div class="bg-royal-cardDark p-3 rounded-2xl border border-emerald-500/30 text-center">
+            <div class="text-[10px] text-emerald-300 uppercase font-bold">गेंदबाज़</div>
+            <div id="statBowler" class="text-2xl font-black text-emerald-400 mt-0.5">0</div>
+            <div class="text-[10px] text-gray-400">🎯 Bowlers</div>
+          </div>
+          <div class="bg-royal-cardDark p-3 rounded-2xl border border-purple-500/30 text-center">
+            <div class="text-[10px] text-purple-300 uppercase font-bold">ऑल-राउंडर</div>
+            <div id="statAllRounder" class="text-2xl font-black text-purple-400 mt-0.5">0</div>
+            <div class="text-[10px] text-gray-400">⚡ All-Rounder</div>
+          </div>
+          <div class="bg-royal-cardDark p-3 rounded-2xl border border-pink-500/30 text-center col-span-2 sm:col-span-1">
+            <div class="text-[10px] text-pink-300 uppercase font-bold">विकेटकीपर</div>
+            <div id="statKeeper" class="text-2xl font-black text-pink-400 mt-0.5">0</div>
+            <div class="text-[10px] text-gray-400">🧤 Keeper</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+        <div onclick="switchTab('tabSquad')" class="bg-royal-cardDark hover:bg-royal-surfaceDark p-3.5 rounded-2xl border border-gray-800 cursor-pointer transition">
+          <div class="text-2xl mb-1">📋</div>
+          <h4 class="text-xs font-bold text-white">खिलाड़ी स्क्वाड</h4>
+          <p class="text-[10px] text-gray-400 mt-0.5">क्लाउड लिस्ट व पास</p>
+        </div>
+        <div onclick="switchTab('tabTeams')" class="bg-royal-cardDark hover:bg-royal-surfaceDark p-3.5 rounded-2xl border border-gray-800 cursor-pointer transition">
+          <div class="text-2xl mb-1">⚖️</div>
+          <h4 class="text-xs font-bold text-white">टीम डिवाइडर</h4>
+          <p class="text-[10px] text-gray-400 mt-0.5">संतुलित टीमें</p>
+        </div>
+        <div onclick="switchTab('tabTools')" class="bg-royal-cardDark hover:bg-royal-surfaceDark p-3.5 rounded-2xl border border-gray-800 cursor-pointer transition col-span-2 sm:col-span-1">
+          <div class="text-2xl mb-1">☁️</div>
+          <h4 class="text-xs font-bold text-white">क्लाउड बैकअप</h4>
+          <p class="text-[10px] text-gray-400 mt-0.5">एक्सेल व JSON</p>
+        </div>
+      </div>
+
+      <!-- Recent Registered Feed -->
+      <div class="bg-royal-cardDark rounded-2xl p-4 border border-gray-800">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-800 text-xs">
+          <span class="font-bold text-gray-200">हाल ही में पंजीकृत खिलाड़ी (Cloud Feed)</span>
+          <button onclick="switchTab('tabSquad')" class="text-amber-400 font-semibold text-[11px] hover:underline">सभी देखें →</button>
+        </div>
+        <div id="recentPlayersContainer" class="space-y-2">
+          <!-- Populated -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- VIEW 2: REGISTER NEW PLAYER -->
+    <section id="viewRegister" class="space-y-4 tab-view hidden">
+      <div class="bg-royal-cardDark rounded-3xl p-4 sm:p-6 gold-border-glow shadow-xl">
+        <div class="flex items-center justify-between pb-3.5 mb-3.5 border-b border-gray-800">
+          <div>
+            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Firebase Realtime Registration</span>
+            <h2 id="formHeaderTitle" class="text-base sm:text-lg font-bold text-white flex items-center gap-1.5">
+              <span>👑 खिलाड़ी पंजीकरण फॉर्म</span>
+            </h2>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+            Cloud Sync Active
+          </span>
+        </div>
+
+        <div id="draftNoticeBox" class="hidden mb-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs text-amber-200">
+          <span>📝 आपका अधूरा ड्राफ्ट रीस्टोर कर दिया गया है।</span>
+          <button type="button" onclick="clearFormDraft()" class="text-amber-400 underline font-bold ml-2">हटाएं</button>
+        </div>
+
+        <form id="playerRegForm" class="space-y-4" onsubmit="handlePlayerSubmit(event)">
+          <input type="hidden" id="editingPlayerId" value="">
+
+          <!-- Photo Compression & Camera Upload -->
+          <div class="flex items-center gap-3.5 bg-royal-surfaceDark/60 p-3 rounded-2xl border border-gray-700/60">
+            <div class="relative flex-shrink-0">
+              <div id="avatarBox" class="w-16 h-16 rounded-2xl bg-royal-cardDark border-2 border-amber-400 flex items-center justify-center overflow-hidden shadow-inner text-2xl">
+                <span id="defaultAvatarIcon">👤</span>
+                <img id="avatarImgPreview" src="" alt="Player Avatar" class="w-full h-full object-cover hidden">
+              </div>
+              <button type="button" onclick="document.getElementById('playerPhotoInput').click()" class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-amber-500 text-black flex items-center justify-center text-xs font-black shadow-lg">
+                📷
+              </button>
+            </div>
+            <div class="flex-1">
+              <span class="block text-xs font-bold text-white">खिलाड़ी का फोटो / सेल्फी</span>
+              <p class="text-[10px] text-gray-400 mt-0.5">कैमरे से फोटो लें। तुरंत कंप्रेस होकर क्लाउड पर सेव होगी।</p>
+              <input type="file" id="playerPhotoInput" accept="image/*" capture="user" class="hidden" onchange="handlePhotoCompression(event)">
+              <div class="flex items-center gap-2 mt-1.5">
+                <button type="button" onclick="document.getElementById('playerPhotoInput').click()" class="text-[11px] font-semibold text-amber-300 underline">तस्वीर अपलोड करें</button>
+                <button type="button" id="btnRemovePhoto" onclick="clearAvatarPhoto()" class="text-[10px] text-red-400 hidden hover:underline">फोटो हटाएं</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div>
+            <label for="playerName" class="block text-xs font-bold text-gray-200 mb-1">खिलाड़ी का पूरा नाम <span class="text-amber-400">*</span></label>
+            <input type="text" id="playerName" required placeholder="उदा. विराट शर्मा" class="w-full px-3.5 py-3 rounded-xl bg-royal-bgDark border border-gray-700 text-white placeholder-gray-500 text-sm outline-none focus:border-amber-400" oninput="triggerDraftSave()">
+          </div>
+
+          <!-- Role -->
+          <div>
+            <label for="playerRole" class="block text-xs font-bold text-gray-200 mb-1">खेलने की श्रेणी / रोल <span class="text-amber-400">*</span></label>
+            <div class="relative">
+              <select id="playerRole" required class="w-full px-3.5 py-3 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none appearance-none focus:border-amber-400" onchange="triggerDraftSave()">
+                <option value="" disabled selected>रोल चुनें</option>
+                <option value="बल्लेबाज़ (Batsman)">🏏 बल्लेबाज़ (Batsman)</option>
+                <option value="तेज़ गेंदबाज़ (Fast Bowler)">🎯 तेज़ गेंदबाज़ (Fast Bowler)</option>
+                <option value="स्पिनर (Spinner)">🌀 स्पिनर (Spinner)</option>
+                <option value="ऑल-राउंडर (All-Rounder)">⚡ ऑल-राउंडर (All-Rounder)</option>
+                <option value="विकेटकीपर (Wicket-Keeper)">🧤 विकेटकीपर (Wicket-Keeper)</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-400">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hand & Bowling -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <span class="block text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">बल्लेबाजी शैली:</span>
+              <div class="grid grid-cols-2 gap-1.5">
+                <label class="cursor-pointer">
+                  <input type="radio" name="battingHand" value="Right Hand (दायां)" checked class="peer sr-only" onchange="triggerDraftSave()">
+                  <div class="p-2 rounded-xl border border-gray-700 bg-royal-surfaceDark text-xs text-center text-gray-300 peer-checked:bg-amber-500 peer-checked:text-black peer-checked:font-bold">दायां हाथ</div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="battingHand" value="Left Hand (बायां)" class="peer sr-only" onchange="triggerDraftSave()">
+                  <div class="p-2 rounded-xl border border-gray-700 bg-royal-surfaceDark text-xs text-center text-gray-300 peer-checked:bg-amber-500 peer-checked:text-black peer-checked:font-bold">बायां हाथ</div>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label for="bowlingStyle" class="block text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">गेंदबाजी प्रकार:</label>
+              <select id="bowlingStyle" class="w-full px-3 py-2 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-xs outline-none focus:border-amber-400" onchange="triggerDraftSave()">
+                <option value="Right-arm Fast">Right-arm Fast</option>
+                <option value="Right-arm Medium">Right-arm Medium</option>
+                <option value="Right-arm Spin">Right-arm Spin</option>
+                <option value="Left-arm Fast">Left-arm Fast</option>
+                <option value="Left-arm Spin">Left-arm Spin</option>
+                <option value="None">केवल बल्लेबाजी</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Team & Age -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="playerTeam" class="block text-xs font-bold text-gray-200 mb-1">टीम / गाँव / क्षेत्र</label>
+              <input type="text" id="playerTeam" placeholder="उदा. रॉयल स्ट्राइकर्स" class="w-full px-3.5 py-2.5 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none focus:border-amber-400" oninput="triggerDraftSave()">
+            </div>
+            <div>
+              <label for="playerAge" class="block text-xs font-bold text-gray-200 mb-1">उम्र (Age)</label>
+              <input type="number" id="playerAge" min="10" max="60" placeholder="उदा. 24" class="w-full px-3.5 py-2.5 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none focus:border-amber-400" oninput="triggerDraftSave()">
+            </div>
+          </div>
+
+          <!-- Jersey, Size, Mobile -->
+          <div class="grid grid-cols-3 gap-2.5">
+            <div>
+              <label for="playerJersey" class="block text-[11px] font-bold text-gray-200 mb-1">जर्सी #</label>
+              <input type="number" id="playerJersey" placeholder="18" class="w-full px-3 py-2.5 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none focus:border-amber-400" oninput="triggerDraftSave()">
+            </div>
+            <div>
+              <label for="playerTshirt" class="block text-[11px] font-bold text-gray-200 mb-1">साइज</label>
+              <select id="playerTshirt" class="w-full px-2 py-2.5 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-xs outline-none" onchange="triggerDraftSave()">
+                <option value="M">M</option>
+                <option value="L" selected>L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
+            </div>
+            <div>
+              <label for="playerMobile" class="block text-[11px] font-bold text-gray-200 mb-1">मोबाइल</label>
+              <input type="tel" id="playerMobile" maxlength="10" placeholder="WhatsApp" class="w-full px-3 py-2.5 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none" oninput="triggerDraftSave()">
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center gap-2">
+            <button type="submit" id="btnSubmitText" class="flex-1 gold-btn py-3.5 rounded-xl font-black text-gray-950 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+              <span>👑 क्लाउड पर सेव करें और पास बनाएं</span>
+            </button>
+            <button type="button" id="btnCancelEdit" onclick="resetRegistrationForm()" class="hidden px-4 py-3.5 rounded-xl bg-gray-800 text-gray-300 text-xs font-bold">रद्द करें</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 3: SQUAD DIRECTORY -->
+    <section id="viewSquad" class="space-y-3.5 tab-view hidden">
+      <div class="bg-royal-cardDark p-3.5 rounded-2xl border border-gray-800 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>📋 क्लाउड स्क्वाड (Cloud Roster)</span>
+            <span id="squadCountBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">0</span>
+          </h2>
+          <div class="flex items-center gap-1.5">
+            <button onclick="toggleSquadViewMode('cards')" id="btnViewCards" class="p-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold">🗂️</button>
+            <button onclick="toggleSquadViewMode('table')" id="btnViewTable" class="p-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700 text-xs">📊</button>
+            <button onclick="shareSquadWhatsApp()" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold">📲 शेयर</button>
+          </div>
+        </div>
+
+        <div class="relative">
+          <input type="text" id="searchSquadInput" placeholder="नाम, गाँव, जर्सी या टोकन से खोजें..." class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-royal-bgDark border border-gray-700 text-xs text-white placeholder-gray-500 outline-none focus:border-amber-400" oninput="renderSquad()">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
+          <button onclick="setSquadFilter('ALL')" id="filterRole-ALL" class="squad-filter-pill whitespace-nowrap px-3 py-1.5 rounded-lg font-bold bg-amber-500 text-black">सभी</button>
+          <button onclick="setSquadFilter('बल्लेबाज़ (Batsman)')" id="filterRole-BAT" class="squad-filter-pill whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700">🏏 बल्लेबाज़</button>
+          <button onclick="setSquadFilter('तेज़ गेंदबाज़ (Fast Bowler)')" id="filterRole-FAST" class="squad-filter-pill whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700">⚡ तेज़ गेंदबाज़</button>
+          <button onclick="setSquadFilter('स्पिनर (Spinner)')" id="filterRole-SPIN" class="squad-filter-pill whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700">🌀 स्पिनर</button>
+          <button onclick="setSquadFilter('ऑल-राउंडर (All-Rounder)')" id="filterRole-AR" class="squad-filter-pill whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700">⚡ ऑल-राउंडर</button>
+          <button onclick="setSquadFilter('विकेटकीपर (Wicket-Keeper)')" id="filterRole-WK" class="squad-filter-pill whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700">🧤 कीपर</button>
+        </div>
+      </div>
+
+      <div id="squadCardsContainer" class="space-y-2.5"></div>
+
+      <div id="squadTableContainer" class="hidden bg-royal-cardDark rounded-2xl border border-gray-800 overflow-x-auto shadow-md">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-royal-surfaceDark text-amber-300 border-b border-gray-800 text-[10px] uppercase font-bold">
+              <th class="py-2.5 px-3">टोकन</th>
+              <th class="py-2.5 px-3">खिलाड़ी</th>
+              <th class="py-2.5 px-3">रोल</th>
+              <th class="py-2.5 px-3">टीम / गाँव</th>
+              <th class="py-2.5 px-3">मोबाइल</th>
+              <th class="py-2.5 px-3 text-center">एक्शन</th>
+            </tr>
+          </thead>
+          <tbody id="squadTableBody" class="divide-y divide-gray-800/80"></tbody>
+        </table>
+      </div>
+
+      <div id="squadEmptyBox" class="hidden bg-royal-cardDark rounded-2xl p-8 text-center border border-gray-800">
+        <div class="text-3xl mb-2">☁️</div>
+        <h4 class="text-sm font-bold text-gray-300">क्लाउड पर कोई खिलाड़ी नहीं मिला</h4>
+        <p class="text-xs text-gray-500 mt-1">नया रजिस्ट्रेशन करें या इंटरनेट कनेक्शन जांचें।</p>
+      </div>
+    </section>
+
+    <!-- VIEW 4: TEAM BALANCER -->
+    <section id="viewTeams" class="space-y-4 tab-view hidden">
+      <div class="bg-royal-cardDark rounded-3xl p-4 sm:p-5 border border-amber-500/30 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Cloud Balancer</span>
+            <h3 class="text-base font-bold text-white flex items-center gap-1.5">
+              <span>⚖️ ऑटोमैटिक टीम डिवाइडर (Team Pools)</span>
+            </h3>
+          </div>
+          <span class="text-2xl">⚡</span>
+        </div>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          क्लाउड पर मौजूद खिलाड़ियों को संतुलित टीमों में विभाजित करें।
+        </p>
+
+        <div class="bg-royal-surfaceDark/70 p-3 rounded-2xl border border-gray-800 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <label for="selectTeamCount" class="text-xs font-bold text-gray-200">कुल टीमें:</label>
+            <select id="selectTeamCount" class="px-3 py-1.5 rounded-xl bg-royal-bgDark border border-gray-700 text-amber-300 text-xs font-bold outline-none">
+              <option value="2">2 टीमें</option>
+              <option value="3">3 टीमें</option>
+              <option value="4" selected>4 टीमें</option>
+              <option value="6">6 टीमें</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="generateBalancedTeams()" class="gold-btn px-4 py-2 rounded-xl text-black font-extrabold text-xs">🎲 टीमें बनाएं</button>
+            <button onclick="shareGeneratedTeamsWhatsApp()" id="btnShareTeamsWA" class="hidden px-3 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs">💬 शेयर</button>
+          </div>
+        </div>
+
+        <div id="generatedTeamsContainer" class="space-y-3 pt-1">
+          <div class="p-6 text-center text-xs text-gray-500 border border-dashed border-gray-800 rounded-2xl">"टीमें बनाएं" बटन दबाएं।</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: TOOLS & BACKUP -->
+    <section id="viewTools" class="space-y-4 tab-view hidden">
+      <div class="bg-gradient-to-r from-emerald-500/10 via-royal-cardDark to-royal-cardDark p-4 rounded-2xl border border-emerald-500/30 space-y-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold flex-shrink-0">☁️</div>
+          <div>
+            <h4 class="text-sm font-bold text-white">Firebase Cloud Database Active</h4>
+            <p class="text-[11px] text-gray-300">
+              आपका सारा डेटा `royal-arena-e8df5` पर रियल-टाइम में सुरक्षित है। दुनिया के किसी भी कोने से ऐप खोलने पर लाइव सिंक मिलेगा।
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-royal-cardDark rounded-2xl p-4 border border-gray-800 space-y-3">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-1.5"><span>🛡️ बैकअप व एक्सेल डाउनलोड</span></h3>
+          <p class="text-[11px] text-gray-400 mt-1">क्लाउड डेटा का JSON बैकअप या Excel/CSV डाउनलोड करें।</p>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="exportBackupJSON()" class="p-3 rounded-xl bg-royal-surfaceDark hover:bg-slate-700 text-left border border-gray-700 transition">
+            <div class="text-lg">📥</div>
+            <div class="text-xs font-bold text-amber-300 mt-1">बैकअप डाउनलोड</div>
+          </button>
+          <label class="p-3 rounded-xl bg-royal-surfaceDark hover:bg-slate-700 text-left border border-gray-700 transition cursor-pointer">
+            <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+            <div class="text-lg">📤</div>
+            <div class="text-xs font-bold text-emerald-400 mt-1">डेटा रिस्टोर</div>
+          </label>
+        </div>
+        <button onclick="exportSquadToCSV()" class="w-full py-2.5 rounded-xl bg-royal-surfaceDark border border-amber-500/30 text-amber-300 font-bold text-xs flex items-center justify-center gap-2">
+          📊 Excel / CSV डाउनलोड करें
+        </button>
+      </div>
+
+      <div class="bg-royal-cardDark rounded-2xl p-4 border border-red-900/30 flex items-center justify-between">
+        <div>
+          <h4 class="text-xs font-bold text-red-300">क्लाउड डेटा रीसेट (Clear Database)</h4>
+          <p class="text-[10px] text-gray-500">Firebase से सभी खिलाड़ियों का डेटा हटाएं।</p>
+        </div>
+        <button onclick="promptClearAllData()" class="px-3 py-1.5 rounded-xl bg-red-950/60 text-red-400 border border-red-800/60 font-bold text-xs">साफ करें</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= BOTTOM NAVIGATION DOCK ================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#050811]/95 backdrop-blur-md border-t border-amber-500/20 px-2 py-1.5" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
+    <div class="max-w-md mx-auto grid grid-cols-5 gap-1 text-center">
+      <button id="navBtn-dashboard" onclick="switchTab('tabDashboard')" class="nav-tab-btn py-1.5 rounded-xl flex flex-col items-center justify-center text-amber-400 font-bold">
+        <span class="text-lg">📊</span>
+        <span class="text-[10px] mt-0.5">डैशबोर्ड</span>
+      </button>
+      <button id="navBtn-register" onclick="switchTab('tabRegister')" class="nav-tab-btn py-1.5 rounded-xl flex flex-col items-center justify-center text-gray-400">
+        <span class="text-lg">➕</span>
+        <span class="text-[10px] mt-0.5">पंजीकरण</span>
+      </button>
+      <button id="navBtn-squad" onclick="switchTab('tabSquad')" class="nav-tab-btn py-1.5 rounded-xl flex flex-col items-center justify-center text-gray-400 relative">
+        <span class="text-lg">📋</span>
+        <span class="text-[10px] mt-0.5">स्क्वाड</span>
+        <span id="navSquadBadge" class="absolute top-1 right-2 text-[9px] font-black bg-amber-500 text-black rounded-full px-1">0</span>
+      </button>
+      <button id="navBtn-teams" onclick="switchTab('tabTeams')" class="nav-tab-btn py-1.5 rounded-xl flex flex-col items-center justify-center text-gray-400">
+        <span class="text-lg">⚖️</span>
+        <span class="text-[10px] mt-0.5">टीमें</span>
+      </button>
+      <button id="navBtn-tools" onclick="switchTab('tabTools')" class="nav-tab-btn py-1.5 rounded-xl flex flex-col items-center justify-center text-gray-400">
+        <span class="text-lg">⚙️</span>
+        <span class="text-[10px] mt-0.5">टूल्स</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================= DIGITAL PLAYER ID PASS MODAL ================= -->
+  <div id="passModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="w-full max-w-sm my-auto relative animate-in fade-in duration-200">
+      <button onclick="closePassModal()" class="absolute -top-3 -right-2 z-20 w-8 h-8 rounded-full bg-gray-800 text-gray-300 hover:text-white border border-gray-600 flex items-center justify-center text-sm font-bold shadow-xl">✕</button>
+
+      <div id="printPassArea" class="bg-gradient-to-b from-[#131e38] via-[#0c1426] to-[#070b14] rounded-3xl border-2 border-amber-400 p-5 shadow-2xl relative overflow-hidden text-center text-white">
+        <div class="border-b border-amber-500/30 pb-3 relative">
+          <div class="inline-block px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-[9px] font-bold text-amber-300 uppercase tracking-widest mb-1">OFFICIAL TOURNAMENT PASS</div>
+          <h3 class="font-cinzel text-lg sm:text-xl font-black gold-gradient-text tracking-wider uppercase">The Royal Arena</h3>
+          <p class="font-cinzel text-[11px] font-bold text-amber-200 uppercase tracking-widest">⚔️ Time To Rule ⚔️</p>
+        </div>
+
+        <div class="py-4 space-y-3 relative">
+          <div class="flex items-center justify-between text-xs px-1">
+            <span class="text-gray-400 text-[11px]">टोकन संख्या:</span>
+            <span id="passCardToken" class="font-mono text-sm font-black px-2 py-0.5 rounded-md bg-amber-500 text-black">TRA-101</span>
+          </div>
+
+          <div class="flex flex-col items-center">
+            <div class="w-20 h-20 rounded-2xl border-2 border-amber-400 p-0.5 bg-royal-bgDark shadow-lg overflow-hidden flex items-center justify-center">
+              <img id="passCardAvatarImg" src="" alt="Photo" class="w-full h-full object-cover rounded-xl hidden">
+              <span id="passCardAvatarFallback" class="text-3xl">👤</span>
+            </div>
+            <h4 id="passCardPlayerName" class="text-xl font-black text-white mt-2 leading-tight break-words">विराट शर्मा</h4>
+            <div class="mt-1 flex items-center gap-1.5 flex-wrap justify-center">
+              <span id="passCardRoleBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 font-bold text-xs">🏏 बल्लेबाज़</span>
+              <span id="passCardJerseyBadge" class="px-2 py-0.5 rounded-full bg-gray-800 border border-gray-700 text-gray-300 text-xs font-mono font-bold hidden">#18</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-left text-xs bg-royal-cardDark/80 p-3 rounded-2xl border border-gray-800">
+            <div><span class="text-gray-400 text-[10px] block">टीम / गाँव:</span><span id="passCardTeam" class="font-bold text-gray-200 truncate block mt-0.5">रॉयल स्ट्राइकर्स</span></div>
+            <div><span class="text-gray-400 text-[10px] block">बल्लेबाजी:</span><span id="passCardStyle" class="font-bold text-gray-200 truncate block mt-0.5">दायां हाथ</span></div>
+            <div><span class="text-gray-400 text-[10px] block">गेंदबाजी:</span><span id="passCardBowling" class="font-bold text-gray-200 truncate block mt-0.5">-</span></div>
+            <div><span class="text-gray-400 text-[10px] block">उम्र / साइज:</span><span id="passCardAgeSize" class="font-bold text-gray-200 truncate block mt-0.5">24 / L</span></div>
+          </div>
+
+          <div class="flex items-center justify-center gap-1 text-[11px] text-emerald-400 font-semibold pt-1">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <span>Firebase Cloud Verified Entry</span>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-gray-800 space-y-2 no-print">
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="window.print()" class="py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs">🖨️ प्रिंट / PDF</button>
+            <button type="button" onclick="shareSinglePassWhatsApp()" class="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs">💬 व्हाट्सएप पास</button>
+          </div>
+          <button type="button" onclick="closePassModal()" class="w-full py-2 rounded-xl bg-gray-800 text-gray-300 text-xs font-semibold">बंद करें</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALL GUIDE MODAL -->
+  <div id="installGuideModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-royal-cardDark border-2 border-amber-400/50 max-w-sm w-full rounded-3xl p-5 shadow-2xl space-y-3.5">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center text-2xl mb-1.5">📲</div>
+        <h3 class="text-base font-bold text-white">मोबाइल में ऐप कैसे सेव करें?</h3>
+        <p class="text-xs text-gray-400">होमस्क्रीन पर इंस्टॉल करें</p>
+      </div>
+      <div class="space-y-2.5 text-xs text-gray-300">
+        <div class="p-3 rounded-2xl bg-royal-surfaceDark border border-gray-800">
+          <div class="font-bold text-amber-300 mb-1">🤖 एंड्रॉइड (Android / Chrome):</div>
+          <ol class="list-decimal list-inside space-y-1 text-[11px]">
+            <li>ऊपर दाईं ओर दिए <b>3 डॉट्स (⋮)</b> पर टैप करें।</li>
+            <li><b>'Install app'</b> या <b>'Add to Home screen'</b> चुनें।</li>
+          </ol>
+        </div>
+        <div class="p-3 rounded-2xl bg-royal-surfaceDark border border-gray-800">
+          <div class="font-bold text-amber-300 mb-1">🍎 आईफोन (iPhone / Safari):</div>
+          <ol class="list-decimal list-inside space-y-1 text-[11px]">
+            <li>सफारी में नीचे <b>Share बटन (⎋)</b> पर टैप करें।</li>
+            <li><b>'Add to Home Screen' (+)</b> चुनें।</li>
+          </ol>
+        </div>
+      </div>
+      <button onclick="closeInstallGuideModal()" class="w-full py-2.5 rounded-xl gold-btn text-black font-black text-xs">समझ गया</button>
+    </div>
+  </div>
+
+  <!-- CUSTOM CONFIRMATION MODAL -->
+  <div id="customConfirmModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-royal-cardDark border border-gray-700 max-w-sm w-full rounded-2xl p-5 text-center shadow-2xl space-y-3">
+      <div id="confirmIcon" class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 mx-auto flex items-center justify-center text-xl border border-red-500/30">⚠️</div>
+      <div>
+        <h4 id="confirmModalTitle" class="text-base font-bold text-white">क्या आप सुनिश्चित हैं?</h4>
+        <p id="confirmModalText" class="text-xs text-gray-400 mt-1">यह क्रिया वापस नहीं ली जा सकती।</p>
+      </div>
+      <div class="flex items-center gap-2 pt-2">
+        <button id="btnConfirmCancel" class="flex-1 py-2.5 rounded-xl bg-gray-800 text-gray-300 text-xs font-semibold">रद्द करें</button>
+        <button id="btnConfirmAction" class="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-xs font-bold">हाँ, आगे बढ़ें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBox" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none w-11/12 max-w-sm">
+    <div class="bg-royal-cardDark/95 border-2 border-amber-400 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-md">
+      <span id="toastIcon" class="text-2xl flex-shrink-0">👑</span>
+      <div class="flex-1">
+        <p id="toastTitle" class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">सूचना</p>
+        <p id="toastMessage" class="text-xs text-gray-200 mt-0.5">काम सफल रहा।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FIREBASE SDK & APP LOGIC ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getDatabase, ref, set, get, remove, onValue, push, child } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+    // Firebase Configuration provided by user
+    const firebaseConfig = {
+      apiKey: "AIzaSyCPoYxGcOm65GVDU-nAv4_DsjRjIaRzYUw",
+      authDomain: "royal-arena-e8df5.firebaseapp.com",
+      databaseURL: "https://royal-arena-e8df5-default-rtdb.firebaseio.com",
+      projectId: "royal-arena-e8df5",
+      storageBucket: "royal-arena-e8df5.firebasestorage.app",
+      messagingSenderId: "777894156302",
+      appId: "1:777894156302:web:7dcc9e7c3da74e9271445f",
+      measurementId: "G-FM1N9ELE5C"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Globals
+    let playersMap = {}; // id -> player object
+    let playersList = [];
+    let currentSquadFilter = 'ALL';
+    let currentViewMode = 'cards';
+    let currentViewingPlayer = null;
+    let tempAvatarPhoto = '';
+    let deferredPrompt = null;
+    let lastGeneratedTeams = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initDynamicPWA();
+      setupInstallListeners();
+      setupFirebaseRealtimeListener();
+      restoreFormDraft();
+    });
+
+    // 1. Realtime Database Listener (/players)
+    function setupFirebaseRealtimeListener() {
+      const playersRef = ref(db, 'players');
+      
+      onValue(playersRef, (snapshot) => {
+        const data = snapshot.val();
+        playersMap = data || {};
+        playersList = Object.keys(playersMap).map(key => ({
+          firebaseKey: key,
+          ...playersMap[key]
+        }));
+        // Sort newest first
+        playersList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        renderAllViews();
+        updateCloudStatus(true);
+      }, (error) => {
+        console.error("Firebase sync error:", error);
+        updateCloudStatus(false);
+      });
+    }
+
+    function updateCloudStatus(isConnected) {
+      const dot = document.getElementById('cloudStatusDot');
+      const text = document.getElementById('cloudStatusText');
+      const sub = document.getElementById('cloudStatusSubtext');
+      if (isConnected) {
+        dot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500';
+        text.innerText = 'Firebase Realtime Database सिंक सक्रिय है';
+        sub.innerText = 'डेटा क्लाउड पर रियल-टाइम सुरक्षित है (royal-arena-e8df5)';
+      } else {
+        dot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500';
+        text.innerText = 'क्लाउड सिंक रीकनेक्ट हो रहा है...';
+        sub.innerText = 'ऑफ़लाइन या कनेक्शन धीमा है';
+      }
+    }
+
+    window.forceCloudRefresh = function() {
+      const playersRef = ref(db, 'players');
+      get(playersRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          showToast('क्लाउड डेटा रिफ्रेश हो गया!', '☁️');
+        } else {
+          showToast('क्लाउड पर अभी कोई डेटा नहीं है।', 'ℹ️');
+        }
+      }).catch(() => {
+        showToast('कनेक्शन त्रुटि!', '⚠️');
+      });
+    };
+
+    // 2. Camera Compression & Drafts
+    window.handlePhotoCompression = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 280;
+          let w = img.width, h = img.height;
+          if (w > h) { if (w > maxDim) { h *= maxDim / w; w = maxDim; } }
+          else { if (h > maxDim) { w *= maxDim / h; h = maxDim; } }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          tempAvatarPhoto = canvas.toDataURL('image/jpeg', 0.8);
+
+          document.getElementById('avatarImgPreview').src = tempAvatarPhoto;
+          document.getElementById('avatarImgPreview').classList.remove('hidden');
+          document.getElementById('defaultAvatarIcon').classList.add('hidden');
+          document.getElementById('btnRemovePhoto').classList.remove('hidden');
+          triggerDraftSave();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.clearAvatarPhoto = function() {
+      tempAvatarPhoto = '';
+      document.getElementById('playerPhotoInput').value = '';
+      document.getElementById('avatarImgPreview').classList.add('hidden');
+      document.getElementById('defaultAvatarIcon').classList.remove('hidden');
+      document.getElementById('btnRemovePhoto').classList.add('hidden');
+      triggerDraftSave();
+    };
+
+    let draftTimeout = null;
+    window.triggerDraftSave = function() {
+      clearTimeout(draftTimeout);
+      draftTimeout = setTimeout(() => {
+        const draft = {
+          name: document.getElementById('playerName').value,
+          role: document.getElementById('playerRole').value,
+          bowlingStyle: document.getElementById('bowlingStyle').value,
+          team: document.getElementById('playerTeam').value,
+          age: document.getElementById('playerAge').value,
+          jersey: document.getElementById('playerJersey').value,
+          tshirt: document.getElementById('playerTshirt').value,
+          mobile: document.getElementById('playerMobile').value,
+          battingHand: document.querySelector('input[name="battingHand"]:checked')?.value || 'Right Hand (दायां)',
+          photo: tempAvatarPhoto
+        };
+        localStorage.setItem('royal_firebase_draft', JSON.stringify(draft));
+      }, 300);
+    };
+
+    function restoreFormDraft() {
+      const str = localStorage.getItem('royal_firebase_draft');
+      if (!str) return;
+      try {
+        const d = JSON.parse(str);
+        if (!d.name && !d.team) return;
+        if (d.name) document.getElementById('playerName').value = d.name;
+        if (d.role) document.getElementById('playerRole').value = d.role;
+        if (d.bowlingStyle) document.getElementById('bowlingStyle').value = d.bowlingStyle;
+        if (d.team) document.getElementById('playerTeam').value = d.team;
+        if (d.age) document.getElementById('playerAge').value = d.age;
+        if (d.jersey) document.getElementById('playerJersey').value = d.jersey;
+        if (d.tshirt) document.getElementById('playerTshirt').value = d.tshirt;
+        if (d.mobile) document.getElementById('playerMobile').value = d.mobile;
+        if (d.battingHand) {
+          document.querySelectorAll('input[name="battingHand"]').forEach(r => { if (r.value === d.battingHand) r.checked = true; });
+        }
+        if (d.photo) {
+          tempAvatarPhoto = d.photo;
+          document.getElementById('avatarImgPreview').src = d.photo;
+          document.getElementById('avatarImgPreview').classList.remove('hidden');
+          document.getElementById('defaultAvatarIcon').classList.add('hidden');
+          document.getElementById('btnRemovePhoto').classList.remove('hidden');
+        }
+        document.getElementById('draftNoticeBox').classList.remove('hidden');
+      } catch(e){}
+    }
+
+    window.clearFormDraft = function() {
+      localStorage.removeItem('royal_firebase_draft');
+      document.getElementById('draftNoticeBox').classList.add('hidden');
+      resetRegistrationForm();
+    };
+
+    // 3. Form Submit to Firebase
+    window.handlePlayerSubmit = async function(e) {
+      e.preventDefault();
+
+      const editKey = document.getElementById('editingPlayerId').value;
+      const name = document.getElementById('playerName').value.trim();
+      const role = document.getElementById('playerRole').value;
+      const battingHand = document.querySelector('input[name="battingHand"]:checked')?.value || 'Right Hand (दायां)';
+      const bowlingStyle = document.getElementById('bowlingStyle').value;
+      const team = document.getElementById('playerTeam').value.trim() || 'व्यक्तिगत (Individual)';
+      const age = document.getElementById('playerAge').value.trim() || '-';
+      const jersey = document.getElementById('playerJersey').value.trim();
+      const tshirt = document.getElementById('playerTshirt').value;
+      const mobile = document.getElementById('playerMobile').value.trim() || '-';
+
+      if (!name || !role) {
+        showToast('कृपया नाम और रोल भरें!', '⚠️');
+        return;
+      }
+
+      const tokenNum = 100 + playersList.length + 1;
+      const playerData = {
+        id: editKey ? playersList.find(p => p.firebaseKey === editKey)?.id || `TRA-${tokenNum}` : `TRA-${tokenNum}`,
+        name, role, battingHand, bowlingStyle, team, age, jersey, tshirt, mobile,
+        photo: tempAvatarPhoto,
+        timestamp: Date.now(),
+        date: new Date().toLocaleDateString('en-GB')
+      };
+
+      try {
+        if (editKey) {
+          // Update existing
+          await set(ref(db, `players/${editKey}`), playerData);
+          showToast(`खिलाड़ी "${name}" क्लाउड पर अपडेट हो गया!`, '✏️');
+        } else {
+          // Push new
+          const newRef = push(ref(db, 'players'));
+          await set(newRef, playerData);
+          
+          try {
+            if (typeof confetti === 'function') {
+              confetti({ particleCount: 65, spread: 70, origin: { y: 0.6 }, colors: ['#F59E0B', '#FBBF24', '#FFFFFF'] });
+            }
+          } catch(err){}
+
+          showToast(`👑 ${name} का डेटा Firebase पर सेव हो गया!`, '🎉');
+        }
+
+        localStorage.removeItem('royal_firebase_draft');
+        resetRegistrationForm();
+        switchTab('tabSquad');
+        openPassModal(playerData);
+      } catch (err) {
+        console.error(err);
+        showToast('क्लाउड सेव करने में विफल! इंटरनेट जांचें।', '❌');
+      }
+    };
+
+    window.editPlayer = function(firebaseKey) {
+      const p = playersList.find(item => item.firebaseKey === firebaseKey);
+      if (!p) return;
+
+      switchTab('tabRegister');
+      document.getElementById('editingPlayerId').value = p.firebaseKey;
+      document.getElementById('playerName').value = p.name;
+      document.getElementById('playerRole').value = p.role;
+      document.getElementById('bowlingStyle').value = p.bowlingStyle || 'Right-arm Fast';
+      document.getElementById('playerTeam').value = p.team === 'व्यक्तिगत (Individual)' ? '' : p.team;
+      document.getElementById('playerAge').value = p.age === '-' ? '' : p.age;
+      document.getElementById('playerJersey').value = p.jersey || '';
+      document.getElementById('playerTshirt').value = p.tshirt || 'L';
+      document.getElementById('playerMobile').value = p.mobile === '-' ? '' : p.mobile;
+
+      document.querySelectorAll('input[name="battingHand"]').forEach(r => {
+        if (r.value === p.battingHand) r.checked = true;
+      });
+
+      if (p.photo) {
+        tempAvatarPhoto = p.photo;
+        document.getElementById('avatarImgPreview').src = p.photo;
+        document.getElementById('avatarImgPreview').classList.remove('hidden');
+        document.getElementById('defaultAvatarIcon').classList.add('hidden');
+        document.getElementById('btnRemovePhoto').classList.remove('hidden');
+      } else {
+        tempAvatarPhoto = '';
+        document.getElementById('avatarImgPreview').classList.add('hidden');
+        document.getElementById('defaultAvatarIcon').classList.remove('hidden');
+        document.getElementById('btnRemovePhoto').classList.add('hidden');
+      }
+
+      document.getElementById('formHeaderTitle').innerText = '✏️ खिलाड़ी विवरण संशोधित करें';
+      document.getElementById('btnSubmitText').innerText = '💾 क्लाउड अपडेट सुरक्षित करें';
+      document.getElementById('btnCancelEdit').classList.remove('hidden');
+    };
+
+    window.resetRegistrationForm = function() {
+      document.getElementById('playerRegForm').reset();
+      document.getElementById('editingPlayerId').value = '';
+      clearAvatarPhoto();
+      document.getElementById('formHeaderTitle').innerText = '👑 खिलाड़ी पंजीकरण फॉर्म';
+      document.getElementById('btnSubmitText').innerText = '👑 क्लाउड पर सेव करें और पास बनाएं';
+      document.getElementById('btnCancelEdit').classList.add('hidden');
+      document.getElementById('draftNoticeBox').classList.add('hidden');
+    };
+
+    // 4. Navigation & Tabs
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+      const navMap = { 'tabDashboard': 'navBtn-dashboard', 'tabRegister': 'navBtn-register', 'tabSquad': 'navBtn-squad', 'tabTeams': 'navBtn-teams', 'tabTools': 'navBtn-tools' };
+      
+      Object.values(navMap).forEach(bId => {
+        const btn = document.getElementById(bId);
+        if (btn) { btn.classList.remove('text-amber-400', 'font-bold'); btn.classList.add('text-gray-400'); }
+      });
+
+      const viewMap = { 'tabDashboard': 'viewDashboard', 'tabRegister': 'viewRegister', 'tabSquad': 'viewSquad', 'tabTeams': 'viewTeams', 'tabTools': 'viewTools' };
+      const target = document.getElementById(viewMap[tabId]);
+      if (target) target.classList.remove('hidden');
+
+      const active = document.getElementById(navMap[tabId]);
+      if (active) { active.classList.add('text-amber-400', 'font-bold'); active.classList.remove('text-gray-400'); }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // 5. Views Rendering & Stats
+    function renderAllViews() {
+      renderStats();
+      renderRecentWidget();
+      renderSquad();
+    }
+
+    function renderStats() {
+      const total = playersList.length;
+      let batsmen = 0, bowlers = 0, allRounders = 0, keepers = 0;
+      playersList.forEach(p => {
+        if (p.role.includes('बल्लेबाज़')) batsmen++;
+        else if (p.role.includes('गेंदबाज़') || p.role.includes('स्पिनर')) bowlers++;
+        else if (p.role.includes('ऑल-राउंडर')) allRounders++;
+        else if (p.role.includes('विकेटकीपर')) keepers++;
+      });
+
+      document.getElementById('statTotal').innerText = total;
+      document.getElementById('statBatsman').innerText = batsmen;
+      document.getElementById('statBowler').innerText = bowlers;
+      document.getElementById('statAllRounder').innerText = allRounders;
+      document.getElementById('statKeeper').innerText = keepers;
+      document.getElementById('badgeTotalPlayers').innerText = `कुल: ${total} खिलाड़ी`;
+      document.getElementById('squadCountBadge').innerText = total;
+      document.getElementById('navSquadBadge').innerText = total;
+    }
+
+    function renderRecentWidget() {
+      const container = document.getElementById('recentPlayersContainer');
+      const recent = playersList.slice(0, 3);
+      if (recent.length === 0) {
+        container.innerHTML = `<div class="py-3 text-center text-xs text-gray-400">क्लाउड पर अभी कोई खिलाड़ी नहीं है।</div>`;
+        return;
+      }
+      let html = '';
+      recent.forEach(p => {
+        html += `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-royal-surfaceDark/50 border border-gray-800">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-royal-cardDark border border-amber-500/40 flex items-center justify-center overflow-hidden text-xs flex-shrink-0">
+                ${p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : `👤`}
+              </div>
+              <div>
+                <h5 class="text-xs font-bold text-white leading-tight">${p.name}</h5>
+                <span class="text-[10px] text-amber-300/80">${p.role}</span>
+              </div>
+            </div>
+            <button onclick="openPassByFirebaseKey('${p.firebaseKey}')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30">पास</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    window.toggleSquadViewMode = function(mode) {
+      currentViewMode = mode;
+      const bCard = document.getElementById('btnViewCards');
+      const bTable = document.getElementById('btnViewTable');
+      if (mode === 'cards') {
+        bCard.className = 'p-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold';
+        bTable.className = 'p-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700 text-xs';
+        document.getElementById('squadCardsContainer').classList.remove('hidden');
+        document.getElementById('squadTableContainer').classList.add('hidden');
+      } else {
+        bTable.className = 'p-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold';
+        bCard.className = 'p-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700 text-xs';
+        document.getElementById('squadCardsContainer').classList.add('hidden');
+        document.getElementById('squadTableContainer').classList.remove('hidden');
+      }
+      renderSquad();
+    };
+
+    window.setSquadFilter = function(role) {
+      currentSquadFilter = role;
+      const map = { 'ALL': 'filterRole-ALL', 'बल्लेबाज़ (Batsman)': 'filterRole-BAT', 'तेज़ गेंदबाज़ (Fast Bowler)': 'filterRole-FAST', 'स्पिनर (Spinner)': 'filterRole-SPIN', 'ऑल-राउंडर (All-Rounder)': 'filterRole-AR', 'विकेटकीपर (Wicket-Keeper)': 'filterRole-WK' };
+      Object.values(map).forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.className = 'squad-filter-pill whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700';
+      });
+      const act = document.getElementById(map[role] || 'filterRole-ALL');
+      if (act) act.className = 'squad-filter-pill whitespace-nowrap px-3 py-1.5 rounded-lg font-bold bg-amber-500 text-black';
+      renderSquad();
+    };
+
+    function renderSquad() {
+      const cCont = document.getElementById('squadCardsContainer');
+      const tBody = document.getElementById('squadTableBody');
+      const emptyBox = document.getElementById('squadEmptyBox');
+      const searchVal = (document.getElementById('searchSquadInput').value || '').toLowerCase().trim();
+
+      const filtered = playersList.filter(p => {
+        const matchRole = (currentSquadFilter === 'ALL') || (p.role === currentSquadFilter);
+        const matchSearch = p.name.toLowerCase().includes(searchVal) || p.team.toLowerCase().includes(searchVal) || p.id.toLowerCase().includes(searchVal) || (p.jersey && p.jersey.includes(searchVal)) || p.mobile.includes(searchVal);
+        return matchRole && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        cCont.innerHTML = ''; tBody.innerHTML = ''; emptyBox.classList.remove('hidden');
+        return;
+      }
+      emptyBox.classList.add('hidden');
+
+      let cardsHtml = '';
+      filtered.forEach(p => {
+        let badgeStyle = 'text-amber-300 bg-amber-500/10 border-amber-500/30';
+        if (p.role.includes('बल्लेबाज़')) badgeStyle = 'text-blue-300 bg-blue-500/15 border-blue-500/30';
+        else if (p.role.includes('गेंदबाज़') || p.role.includes('स्पिनर')) badgeStyle = 'text-emerald-300 bg-emerald-500/15 border-emerald-500/30';
+        else if (p.role.includes('ऑल-राउंडर')) badgeStyle = 'text-purple-300 bg-purple-500/15 border-purple-500/30';
+        else if (p.role.includes('विकेटकीपर')) badgeStyle = 'text-pink-300 bg-pink-500/15 border-pink-500/30';
+
+        cardsHtml += `
+          <div class="bg-royal-cardDark rounded-2xl p-3.5 border border-gray-800 shadow-md">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-royal-surfaceDark border border-amber-500/30 flex items-center justify-center overflow-hidden text-xl flex-shrink-0">
+                  ${p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : `👤`}
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <h4 class="text-sm font-bold text-white leading-tight">${p.name}</h4>
+                    ${p.jersey ? `<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-gray-800 text-amber-300 border border-gray-700 font-bold">#${p.jersey}</span>` : ''}
+                  </div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] font-medium px-2 py-0.5 rounded-full border ${badgeStyle}">${p.role}</span>
+                    <span class="text-[10px] text-gray-400 font-mono">${p.id}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2.5 pt-2 border-t border-gray-800 grid grid-cols-2 text-[11px] text-gray-400">
+              <div>📍 <span class="text-gray-300">${p.team}</span></div>
+              <div>🏏 <span class="text-gray-300">${p.battingHand}</span></div>
+            </div>
+            <div class="mt-2.5 pt-2 border-t border-gray-800 flex items-center justify-between gap-1.5">
+              <button onclick="openPassByFirebaseKey('${p.firebaseKey}')" class="flex-1 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black font-bold text-xs border border-amber-500/30 transition flex items-center justify-center gap-1">🎟️ आईडी पास</button>
+              <button onclick="editPlayer('${p.firebaseKey}')" class="p-1.5 rounded-lg bg-royal-surfaceDark text-gray-300 border border-gray-700 text-xs" title="एडिट">✏️</button>
+              <button onclick="promptDeletePlayer('${p.firebaseKey}', '${p.name.replace(/'/g, "\\'")}')" class="p-1.5 rounded-lg bg-red-950/40 text-red-400 border border-red-800/40 text-xs" title="हटाएं">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+      cCont.innerHTML = cardsHtml;
+
+      let tableHtml = '';
+      filtered.forEach(p => {
+        tableHtml += `
+          <tr class="hover:bg-royal-surfaceDark/40">
+            <td class="py-2.5 px-3 font-mono font-bold text-amber-400">${p.id}</td>
+            <td class="py-2.5 px-3 font-semibold text-white">${p.name}</td>
+            <td class="py-2.5 px-3 text-gray-300">${p.role}</td>
+            <td class="py-2.5 px-3 text-gray-400">${p.team}</td>
+            <td class="py-2.5 px-3 text-gray-400 font-mono">${p.mobile}</td>
+            <td class="py-2.5 px-3 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button onclick="openPassByFirebaseKey('${p.firebaseKey}')" class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">पास</button>
+                <button onclick="editPlayer('${p.firebaseKey}')" class="p-1 rounded bg-royal-surfaceDark text-gray-300">✏️</button>
+                <button onclick="promptDeletePlayer('${p.firebaseKey}', '${p.name.replace(/'/g, "\\'")}')" class="p-1 rounded text-red-400">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      tBody.innerHTML = tableHtml;
+    }
+
+    // 6. Team Balancer
+    window.generateBalancedTeams = function() {
+      if (playersList.length < 2) {
+        showToast('कम से कम 2 खिलाड़ी चाहिए!', '⚠️');
+        return;
+      }
+      const count = parseInt(document.getElementById('selectTeamCount').value) || 2;
+      const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
+
+      const bats = shuffle(playersList.filter(p => p.role.includes('बल्लेबाज़')));
+      const bowls = shuffle(playersList.filter(p => p.role.includes('गेंदबाज़') || p.role.includes('स्पिनर')));
+      const ars = shuffle(playersList.filter(p => p.role.includes('ऑल-राउंडर')));
+      const wks = shuffle(playersList.filter(p => p.role.includes('विकेटकीपर')));
+      const others = shuffle(playersList.filter(p => !p.role.includes('बल्लेबाज़') && !p.role.includes('गेंदबाज़') && !p.role.includes('स्पिनर') && !p.role.includes('ऑल-राउंडर') && !p.role.includes('विकेटकीपर')));
+
+      const teams = Array.from({ length: count }, (_, i) => ({ name: `रॉयल टीम ${String.fromCharCode(65 + i)}`, players: [] }));
+      const dist = list => { let t = 0; list.forEach(p => { teams[t].players.push(p); t = (t + 1) % count; }); };
+      dist(bats); dist(bowls); dist(ars); dist(wks); dist(others);
+      lastGeneratedTeams = teams;
+
+      let html = '';
+      teams.forEach(t => {
+        html += `
+          <div class="bg-royal-cardDark rounded-2xl p-4 border border-amber-500/30 shadow-lg">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-800">
+              <h4 class="text-sm font-black gold-gradient-text">🛡️ ${t.name}</h4>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${t.players.length} खिलाड़ी</span>
+            </div>
+            <div class="space-y-1.5 text-xs">
+              ${t.players.map((p, idx) => `<div class="flex items-center justify-between p-1.5 rounded-lg bg-royal-surfaceDark/60 text-gray-200"><span class="font-mono text-amber-400">${idx+1}.</span> <span class="font-bold">${p.name}</span> <span class="text-[10px] text-gray-400">${p.role}</span></div>`).join('')}
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('generatedTeamsContainer').innerHTML = html;
+      document.getElementById('btnShareTeamsWA').classList.remove('hidden');
+      showToast(`${count} संतुलित टीमें बन गईं!`, '🎲');
+    };
+
+    window.shareGeneratedTeamsWhatsApp = function() {
+      if (!lastGeneratedTeams.length) return;
+      let msg = `🏆 *THE ROYAL ARENA: CLOUD TEAMS* 🏆%0A%0A`;
+      lastGeneratedTeams.forEach(t => {
+        msg += `🛡️ *${t.name}* (${t.players.length})%0A`;
+        t.players.forEach((p, idx) => { msg += `  ${idx+1}. ${p.name} - ${p.role}%0A`; });
+        msg += `%0A`;
+      });
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    };
+
+    // 7. Digital ID Pass & WhatsApp
+    window.openPassByFirebaseKey = function(key) {
+      const p = playersList.find(item => item.firebaseKey === key);
+      if (p) openPassModal(p);
+    };
+
+    function openPassModal(p) {
+      currentViewingPlayer = p;
+      document.getElementById('passCardToken').innerText = p.id;
+      document.getElementById('passCardPlayerName').innerText = p.name;
+      document.getElementById('passCardRoleBadge').innerText = p.role;
+      document.getElementById('passCardTeam').innerText = p.team;
+      document.getElementById('passCardStyle').innerText = p.battingHand;
+      document.getElementById('passCardBowling').innerText = p.bowlingStyle || '-';
+      document.getElementById('passCardAgeSize').innerText = `${p.age || '-'} / ${p.tshirt || 'L'}`;
+
+      const jBadge = document.getElementById('passCardJerseyBadge');
+      if (p.jersey) { jBadge.innerText = `#${p.jersey}`; jBadge.classList.remove('hidden'); } else { jBadge.classList.add('hidden'); }
+
+      const img = document.getElementById('passCardAvatarImg');
+      const fallback = document.getElementById('passCardAvatarFallback');
+      if (p.photo) { img.src = p.photo; img.classList.remove('hidden'); fallback.classList.add('hidden'); }
+      else { img.classList.add('hidden'); fallback.classList.remove('hidden'); }
+
+      const m = document.getElementById('passModal');
+      m.classList.remove('hidden'); m.classList.add('flex');
+    }
+
+    window.closePassModal = function() {
+      const m = document.getElementById('passModal');
+      m.classList.add('hidden'); m.classList.remove('flex');
+    };
+
+    window.shareSinglePassWhatsApp = function() {
+      if (!currentViewingPlayer) return;
+      const p = currentViewingPlayer;
+      let msg = `👑 *THE ROYAL ARENA: TIME TO RULE* 👑%0A🎟️ *क्लाउड प्लेयर पास*%0A%0A• ID: ${p.id}%0A• नाम: ${p.name}%0A• रोल: ${p.role}%0A• टीम: ${p.team}%0A✅ _Verified Firebase Entry_`;
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    };
+
+    window.shareSquadWhatsApp = function() {
+      if (!playersList.length) { showToast('कोई खिलाड़ी नहीं है!', '⚠️'); return; }
+      let msg = `🏆 *THE ROYAL ARENA SQUAD* 🏆%0A कुल खिलाड़ी: ${playersList.length}%0A%0A`;
+      playersList.forEach((p, idx) => { msg += `${idx+1}. *${p.name}* [${p.id}] - ${p.role}%0A`; });
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    };
+
+    // 8. Backup & Export
+    window.exportBackupJSON = function() {
+      if (!playersList.length) { showToast('कोई डेटा नहीं है!', '⚠️'); return; }
+      const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playersList, null, 2));
+      const a = document.createElement('a'); a.href = str;
+      a.download = `Royal_Arena_Firebase_Backup_${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      showToast('क्लाउड बैकअप डाउनलोड हो गया!', '📥');
+    };
+
+    window.importBackupJSON = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const arr = JSON.parse(evt.target.result);
+          if (Array.isArray(arr)) {
+            for (const item of arr) {
+              const newRef = push(ref(db, 'players'));
+              await set(newRef, item);
+            }
+            showToast('बैकअप क्लाउड पर रिस्टोर हो गया!', '✅');
+          }
+        } catch(err) { showToast('त्रुटि!', '❌'); }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    };
+
+    window.exportSquadToCSV = function() {
+      if (!playersList.length) { showToast('कोई डेटा नहीं!', '⚠️'); return; }
+      let csv = "data:text/csv;charset=utf-8,\uFEFFटोकन_ID,खिलाड़ी,रोल,टीम,मोबाइल\n";
+      playersList.forEach(p => { csv += `"${p.id}","${p.name}","${p.role}","${p.team}","${p.mobile}"\n`; });
+      const a = document.createElement('a'); a.href = encodeURI(csv);
+      a.download = `Royal_Arena_Cloud_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      showToast('CSV डाउनलोड हो गई!', '📊');
+    };
+
+    // 9. Deletions & Confirms
+    window.promptDeletePlayer = function(firebaseKey, name) {
+      showCustomConfirm(`खिलाड़ी "${name}" को हटाएं?`, 'यह क्लाउड डेटाबेस से स्थायी रूप से डिलीट हो जाएगा।', async () => {
+        try {
+          await remove(ref(db, `players/${firebaseKey}`));
+          showToast('खिलाड़ी क्लाउड से हटा दिया गया!', '🗑️');
+        } catch(err) { showToast('डिलीट विफल!', '❌'); }
+      });
+    };
+
+    window.promptClearAllData = function() {
+      if (!playersList.length) { showToast('सूची पहले से खाली है!', 'ℹ️'); return; }
+      showCustomConfirm('क्या आप सारा क्लाउड डेटा मिटाना चाहते हैं?', 'यह Firebase Realtime Database का सारा डेटा साफ कर देगा!', async () => {
+        try {
+          await remove(ref(db, 'players'));
+          showToast('क्लाउड डेटा पूरी तरह साफ हो गया!', '🧹');
+        } catch(err) { showToast('विफल!', '❌'); }
+      });
+    };
+
+    function showCustomConfirm(title, text, onConfirm) {
+      const m = document.getElementById('customConfirmModal');
+      document.getElementById('confirmModalTitle').innerText = title;
+      document.getElementById('confirmModalText').innerText = text;
+      const act = document.getElementById('btnConfirmAction');
+      const can = document.getElementById('btnConfirmCancel');
+      const cleanup = () => { m.classList.add('hidden'); m.classList.remove('flex'); act.onclick = null; can.onclick = null; };
+      act.onclick = () => { cleanup(); onConfirm(); };
+      can.onclick = cleanup;
+      m.classList.remove('hidden'); m.classList.add('flex');
+    }
+
+    function showToast(msg, icon = '👑') {
+      const t = document.getElementById('toastBox');
+      document.getElementById('toastMessage').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
+      t.classList.remove('-translate-y-20', 'opacity-0');
+      t.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        t.classList.remove('translate-y-0', 'opacity-100');
+        t.classList.add('-translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    // PWA Manifest setup
+    function initDynamicPWA() {
+      try {
+        const manifestObj = {
+          name: "The Royal Arena: Firebase Cloud",
+          short_name: "Royal Arena",
+          start_url: window.location.href,
+          display: "standalone",
+          background_color: "#050811",
+          theme_color: "#050811",
+          icons: [{ src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23050811'/><path d='M12 32 L26 76 L74 76 L88 32 L64 56 L50 26 L36 56 Z' fill='%23F59E0B'/><circle cx='50' cy='18' r='7' fill='%23FDE68A'/></svg>", sizes: "192x192 512x512", type: "image/svg+xml" }]
+        };
+        const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+        document.getElementById('pwaManifestLink').setAttribute('href', URL.createObjectURL(blob));
+      } catch(e){}
+    }
+
+    function setupInstallListeners() {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('btnHeaderInstall').classList.remove('hidden');
+      });
+    }
+
+    window.triggerPwaInstall = function() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      } else {
+        openInstallGuideModal();
+      }
+    };
+
+    window.openInstallGuideModal = function() {
+      const m = document.getElementById('installGuideModal');
+      m.classList.remove('hidden'); m.classList.add('flex');
+    };
+    window.closeInstallGuideModal = function() {
+      const m = document.getElementById('installGuideModal');
+      m.classList.add('hidden'); m.classList.remove('flex');
+    };
+  </script>
+</body>
+</html>
+```
