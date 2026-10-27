@@ -3,14 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>The Royal Arena: Registration & Teams</title>
+  <title>The Royal Arena: Time to Rule - Secured Edition</title>
+
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="theme-color" content="#050811">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Royal Arena">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Cinzel & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -18,9 +30,13 @@
           colors: {
             royal: {
               gold: '#F59E0B',
+              goldLight: '#FDE68A',
+              goldDark: '#B45309',
+              goldBorder: '#D97706',
               bgDark: '#050811',
               cardDark: '#0C1322',
-              surfaceDark: '#141E34'
+              surfaceDark: '#141E34',
+              borderDark: '#26344E'
             }
           },
           fontFamily: {
@@ -35,9 +51,16 @@
   <style>
     body {
       background-color: #050811;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.15) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(217, 119, 6, 0.10) 0px, transparent 45%);
       font-family: 'Inter', sans-serif;
       color: #F8FAFC;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea, select {
+      user-select: text;
     }
     .gold-gradient-text {
       background: linear-gradient(135deg, #FFFBEB 0%, #FBBF24 50%, #D97706 100%);
@@ -47,72 +70,177 @@
     .gold-btn {
       background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
       box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s ease;
+    }
+    .gold-btn:active {
+      transform: scale(0.97);
+      background: linear-gradient(135deg, #FBBF24 0%, #B45309 100%);
+    }
+    .gold-border-glow {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    @media print {
+      body * { visibility: hidden !important; }
+      #printPassArea, #printPassArea * { visibility: visible !important; }
+      #printPassArea {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #000 !important;
+      }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased pb-24">
+<body class="min-h-screen flex flex-col antialiased pb-28 selection:bg-amber-500 selection:text-black">
 
-  <!-- ================= TOP HEADER ================= -->
-  <header class="sticky top-0 z-40 bg-[#050811]/95 backdrop-blur-md border-b border-amber-500/20 px-4 py-3">
-    <div class="max-w-xl mx-auto flex items-center justify-between">
-      <h1 class="font-cinzel text-base font-black gold-gradient-text uppercase">
-        The Royal Arena
-      </h1>
-      <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">FIREBASE LIVE</span>
+  <!-- ================= TOP APP BAR ================= -->
+  <header class="sticky top-0 z-40 bg-[#050811]/95 backdrop-blur-md border-b border-amber-500/20 px-3.5 py-2.5">
+    <div class="max-w-3xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-md flex-shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m2 5 3 11h14l3-11-6 6-4-6-4 6-6-6zm3 15h14v2H5z"/>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-cinzel text-sm sm:text-base font-black gold-gradient-text tracking-wider uppercase leading-none">
+              The Royal Arena
+            </h1>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">SECURED</span>
+          </div>
+          <p class="font-cinzel text-[9px] text-amber-200/80 font-bold tracking-widest uppercase">
+            Time To Rule • लाइव क्लाउड सिंक
+          </p>
+        </div>
+      </div>
+      <!-- Admin Status Badge -->
+      <button onclick="toggleAdminMode()" id="adminBadgeBtn" class="text-[10px] font-bold px-2.5 py-1 rounded-xl bg-gray-800 text-gray-300 border border-gray-700">
+        🔒 Viewer Mode
+      </button>
     </div>
   </header>
 
-  <!-- ================= MAIN CONTENT ================= -->
-  <main class="flex-1 max-w-xl w-full mx-auto px-4 py-3 space-y-4">
+  <!-- ================= FIREBASE CLOUD STATUS BANNER ================= -->
+  <div class="max-w-3xl mx-auto px-4 pt-2.5 w-full">
+    <div class="bg-gradient-to-r from-emerald-950/40 via-royal-cardDark to-royal-cardDark px-3 py-2 rounded-2xl border border-emerald-500/30 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2">
+        <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <div>
+          <span class="text-[11px] font-bold text-emerald-300">Firebase Realtime Database सिंक सक्रिय है</span>
+          <span class="text-[10px] text-gray-400 block">पब्लिक यूज़र केवल स्क्वाड देख सकते हैं</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- DASHBOARD VIEW -->
+  <!-- ================= MAIN CONTENT VIEWPORT ================= -->
+  <main class="flex-1 max-w-3xl w-full mx-auto px-4 py-3 space-y-4">
+
+    <!-- VIEW 1: DASHBOARD -->
     <section id="viewDashboard" class="space-y-4 tab-view">
-      <div class="bg-royal-cardDark rounded-3xl p-5 border border-amber-500/30 shadow-xl">
-        <h2 class="font-cinzel text-xl font-black text-white">
-          Tournament <span class="gold-gradient-text">Registration</span>
-        </h2>
-        <p class="text-xs text-gray-300 mt-1">खिलाड़ियों का रजिस्ट्रेशन और मैन्युअल टीम मैनेजमेंट।</p>
-        
-        <div class="mt-4 flex gap-2">
-          <button onclick="switchTab('tabRegister')" class="gold-btn px-4 py-2.5 rounded-xl text-black font-black text-xs flex-1">
-            ✍️ नया खिलाड़ी जोड़ें
+      <div class="bg-gradient-to-br from-[#121c35] via-royal-cardDark to-[#060a14] rounded-3xl p-5 border border-amber-500/30 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-start justify-between">
+          <div>
+            <span class="inline-block text-[10px] font-bold tracking-widest text-amber-300 uppercase px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/30">
+              ⚔️ लाइव क्लाउड टूर्नामेंट पोर्टल ⚔️
+            </span>
+            <h2 class="font-cinzel text-xl sm:text-2xl font-black text-white mt-1.5 leading-snug">
+              The Royal Arena <span class="gold-gradient-text">Cricket</span>
+            </h2>
+            <p class="text-xs text-gray-300 mt-1 max-w-sm">
+              खिलाड़ियों की सूची और सुरक्षित एडमिन कंट्रोल।
+            </p>
+          </div>
+          <span class="text-4xl">👑</span>
+        </div>
+
+        <div class="mt-4 pt-3.5 border-t border-gray-800/80 flex flex-wrap items-center justify-between gap-2">
+          <button onclick="checkAdminAndSwitch('tabRegister')" class="gold-btn px-4 py-2 rounded-xl text-black font-black text-xs flex items-center gap-1.5">
+            <span>✍️ नया खिलाड़ी जोड़ें (Admin)</span>
           </button>
-          <button onclick="switchTab('tabSquad')" class="px-4 py-2.5 rounded-xl bg-royal-surfaceDark border border-amber-500/30 text-amber-300 font-bold text-xs">
-            📋 स्क्वाड देखें
+          <button onclick="switchTab('tabSquad')" class="px-3.5 py-2 rounded-xl bg-royal-surfaceDark border border-amber-500/30 text-amber-300 font-bold text-xs">
+            <span>📋 खिलाड़ी स्क्वाड देखें</span>
+          </button>
+          <button onclick="checkAdminAndSwitch('tabTeams')" class="px-3.5 py-2 rounded-xl bg-royal-surfaceDark border border-amber-500/30 text-amber-300 font-bold text-xs">
+            <span>⚖️ टीम मैनेजर (Admin)</span>
           </button>
         </div>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-royal-cardDark p-3.5 rounded-2xl border border-amber-500/40 text-center">
-          <div class="text-[10px] text-amber-300 uppercase font-bold">कुल पंजीकृत खिलाड़ी</div>
-          <div id="statTotal" class="text-3xl font-black text-amber-400 mt-1">0</div>
+      <!-- Live Counters -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div class="bg-royal-cardDark p-3 rounded-2xl border border-amber-500/40 text-center">
+          <div class="text-[10px] text-amber-300 uppercase font-bold">कुल खिलाड़ी</div>
+          <div id="statTotal" class="text-2xl font-black text-amber-400 mt-0.5">0</div>
         </div>
-        <div onclick="switchTab('tabTeams')" class="bg-royal-cardDark p-3.5 rounded-2xl border border-blue-500/40 text-center cursor-pointer hover:bg-royal-surfaceDark transition">
-          <div class="text-[10px] text-blue-300 uppercase font-bold">मैनेज करें</div>
-          <div class="text-2xl mt-1">⚖️</div>
-          <div class="text-[10px] text-gray-300 mt-0.5">कस्टम टीम नाम</div>
+        <div class="bg-royal-cardDark p-3 rounded-2xl border border-blue-500/30 text-center">
+          <div class="text-[10px] text-blue-300 uppercase font-bold">बल्लेबाज़</div>
+          <div id="statBatsman" class="text-2xl font-black text-blue-400 mt-0.5">0</div>
+        </div>
+        <div class="bg-royal-cardDark p-3 rounded-2xl border border-emerald-500/30 text-center">
+          <div class="text-[10px] text-emerald-300 uppercase font-bold">गेंदबाज़</div>
+          <div id="statBowler" class="text-2xl font-black text-emerald-400 mt-0.5">0</div>
+        </div>
+        <div class="bg-royal-cardDark p-3 rounded-2xl border border-purple-500/30 text-center">
+          <div class="text-[10px] text-purple-300 uppercase font-bold">ऑल-राउंडर</div>
+          <div id="statAllRounder" class="text-2xl font-black text-purple-400 mt-0.5">0</div>
         </div>
       </div>
     </section>
 
-    <!-- REGISTER VIEW -->
+    <!-- VIEW 2: REGISTER NEW PLAYER (ADMIN ONLY) -->
     <section id="viewRegister" class="space-y-4 tab-view hidden">
-      <div class="bg-royal-cardDark rounded-3xl p-4 sm:p-6 border border-amber-500/30">
-        <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-800">
-          <h2 class="text-base font-bold text-white">👑 खिलाड़ी पंजीकरण फॉर्म</h2>
-          <button onclick="switchTab('tabDashboard')" class="text-xs text-gray-400">← वापस</button>
+      <div class="bg-royal-cardDark rounded-3xl p-4 sm:p-6 gold-border-glow shadow-xl">
+        <div class="flex items-center justify-between pb-3.5 mb-3.5 border-b border-gray-800">
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-1.5">
+            <span>👑 खिलाड़ी पंजीकरण फॉर्म (Admin Only)</span>
+          </h2>
+          <button onclick="switchTab('tabDashboard')" class="text-xs text-gray-400 hover:text-white">← वापस</button>
         </div>
 
         <form id="playerRegForm" class="space-y-4" onsubmit="handlePlayerSubmit(event)">
-          <div>
-            <label class="block text-xs font-bold text-gray-200 mb-1">खिलाड़ी का पूरा नाम *</label>
-            <input type="text" id="playerName" required placeholder="उदा. राहुल कुमार" class="w-full px-3.5 py-3 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none focus:border-amber-400">
+          <!-- Photo Upload & Compression -->
+          <div class="flex items-center gap-3.5 bg-royal-surfaceDark/60 p-3 rounded-2xl border border-gray-700/60">
+            <div class="relative flex-shrink-0">
+              <div id="avatarBox" class="w-16 h-16 rounded-2xl bg-royal-cardDark border-2 border-amber-400 flex items-center justify-center overflow-hidden shadow-inner text-2xl">
+                <span id="defaultAvatarIcon">👤</span>
+                <img id="avatarImgPreview" src="" alt="Player Avatar" class="w-full h-full object-cover hidden">
+              </div>
+              <button type="button" onclick="document.getElementById('playerPhotoInput').click()" class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-amber-500 text-black flex items-center justify-center text-xs font-black shadow-lg">
+                📷
+              </button>
+            </div>
+            <div class="flex-1">
+              <span class="block text-xs font-bold text-white">खिलाड़ी का फोटो / सेल्फी</span>
+              <p class="text-[10px] text-gray-400 mt-0.5">तस्वीर अपलोड करें (ऑटो कंप्रेस होगी)।</p>
+              <input type="file" id="playerPhotoInput" accept="image/*" class="hidden" onchange="handlePhotoCompression(event)">
+              <div class="flex items-center gap-2 mt-1.5">
+                <button type="button" onclick="document.getElementById('playerPhotoInput').click()" class="text-[11px] font-semibold text-amber-300 underline">तस्वीर चुनें</button>
+                <button type="button" id="btnRemovePhoto" onclick="clearAvatarPhoto()" class="text-[10px] text-red-400 hidden hover:underline">हटाएं</button>
+              </div>
+            </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-gray-200 mb-1">रोल / श्रेणी *</label>
+            <label class="block text-xs font-bold text-gray-200 mb-1">खिलाड़ी का पूरा नाम <span class="text-amber-400">*</span></label>
+            <input type="text" id="playerName" required placeholder="उदा. विराट शर्मा" class="w-full px-3.5 py-3 rounded-xl bg-royal-bgDark border border-gray-700 text-white placeholder-gray-500 text-sm outline-none focus:border-amber-400">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-200 mb-1">खेलने की श्रेणी / रोल <span class="text-amber-400">*</span></label>
             <select id="playerRole" required class="w-full px-3.5 py-3 rounded-xl bg-royal-bgDark border border-gray-700 text-white text-sm outline-none focus:border-amber-400">
               <option value="" disabled selected>रोल चुनें</option>
               <option value="बल्लेबाज़ (Batsman)">🏏 बल्लेबाज़ (Batsman)</option>
@@ -122,18 +250,18 @@
             </select>
           </div>
 
-          <button type="submit" class="w-full gold-btn py-3.5 rounded-xl text-black font-black text-sm uppercase">
+          <button type="submit" class="w-full gold-btn py-3.5 rounded-xl text-black font-black text-sm uppercase tracking-wider">
             🚀 क्लाउड पर रजिस्टर करें
           </button>
         </form>
       </div>
     </section>
 
-    <!-- SQUAD VIEW -->
+    <!-- VIEW 3: SQUAD LIST (PUBLIC VIEW) -->
     <section id="viewSquad" class="space-y-4 tab-view hidden">
       <div class="bg-royal-cardDark rounded-3xl p-4 sm:p-6 border border-gray-800">
         <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-800">
-          <h2 class="text-base font-bold text-white">📋 पंजीकृत खिलाड़ी सूची</h2>
+          <h2 class="text-base font-bold text-white">📋 पंजीकृत खिलाड़ी (Cloud Squad)</h2>
           <button onclick="switchTab('tabDashboard')" class="text-xs text-amber-400">← डैशबोर्ड</button>
         </div>
         <div id="playersListContainer" class="space-y-2">
@@ -142,15 +270,15 @@
       </div>
     </section>
 
-    <!-- CUSTOM TEAMS VIEW -->
+    <!-- VIEW 4: CUSTOM TEAMS MANAGER (ADMIN ONLY) -->
     <section id="viewTeams" class="space-y-4 tab-view hidden">
       <div class="bg-royal-cardDark rounded-3xl p-4 sm:p-6 border border-gray-800">
         <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-800">
-          <h2 class="text-base font-bold text-white">⚖️ कस्टम टीम मैनेजर</h2>
+          <h2 class="text-base font-bold text-white">⚖️ कस्टम टीम मैनेजर (Admin Only)</h2>
           <button onclick="switchTab('tabDashboard')" class="text-xs text-amber-400">← डैशबोर्ड</button>
         </div>
         
-        <!-- Team Name Inputs -->
+        <!-- Custom Team Name Inputs -->
         <div class="grid grid-cols-2 gap-2 mb-4">
           <div>
             <label class="block text-[10px] text-amber-400 font-bold mb-1">टीम 1 का नाम:</label>
@@ -164,12 +292,10 @@
 
         <p class="text-[11px] text-gray-400 mb-3">खिलाड़ियों को अपनी पसंद की टीम में असाइन करें:</p>
         
-        <!-- Players Assignment List -->
         <div id="manualPlayersList" class="space-y-2 mb-4">
           <p class="text-xs text-gray-400 text-center py-4">खिलाड़ी लोड हो रहे हैं...</p>
         </div>
 
-        <!-- Summary Lists -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-gray-800">
           <div class="bg-royal-surfaceDark p-3 rounded-2xl border border-amber-500/40">
             <h3 id="displayTeam1Title" class="font-cinzel font-bold text-amber-400 text-xs mb-2">Team Royal</h3>
@@ -189,19 +315,52 @@
 
   </main>
 
+  <!-- ================= DIGITAL PASS MODAL ================= -->
+  <div id="digitalPassModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-royal-cardDark w-full max-w-sm rounded-3xl border border-amber-500/40 p-5 shadow-2xl relative">
+      <button onclick="closeDigitalPass()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-sm font-bold">✕ बंद करें</button>
+      
+      <div id="printPassArea" class="bg-gradient-to-b from-[#121c35] to-[#0c1322] rounded-2xl border-2 border-amber-400/50 p-4 text-white shadow-xl mt-4">
+        <div class="flex items-center justify-between border-b border-amber-500/30 pb-2 mb-3">
+          <span class="font-cinzel text-xs font-black tracking-widest text-amber-400 uppercase">👑 THE ROYAL ARENA</span>
+          <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40">DIGITAL PASS</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="passModalAvatar" class="w-16 h-16 rounded-xl bg-royal-surfaceDark border border-amber-400 flex items-center justify-center overflow-hidden text-2xl font-bold">
+            👤
+          </div>
+          <div>
+            <h3 id="passModalName" class="font-cinzel font-black text-base text-white">विराट शर्मा</h3>
+            <p id="passModalRole" class="text-xs text-amber-300 font-semibold mt-0.5">बल्लेबाज़ (Batsman)</p>
+            <span class="inline-block text-[9px] text-gray-400 mt-1">ID: <span id="passModalId">RA-8210</span></span>
+          </div>
+        </div>
+        <div class="mt-3 pt-2 border-t border-gray-800 text-center text-[10px] text-gray-400">
+          Time To Rule • Official Tournament Pass
+        </div>
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <button onclick="window.print()" class="gold-btn py-2.5 rounded-xl text-black font-bold text-xs flex-1">
+          🖨️ पास प्रिंट / डाउनलोड करें
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= BOTTOM NAVIGATION ================= -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#050811]/95 backdrop-blur-md border-t border-amber-500/20 py-2 px-4">
-    <div class="max-w-xl mx-auto flex justify-around">
+    <div class="max-w-md mx-auto flex justify-around">
       <button onclick="switchTab('tabDashboard')" class="text-amber-400 text-xs font-bold flex flex-col items-center">
         <span>🏠</span> डैशबोर्ड
       </button>
-      <button onclick="switchTab('tabRegister')" class="text-gray-400 text-xs font-bold flex flex-col items-center">
+      <button onclick="checkAdminAndSwitch('tabRegister')" class="text-gray-400 text-xs font-bold flex flex-col items-center">
         <span>✍️</span> रजिस्टर
       </button>
       <button onclick="switchTab('tabSquad')" class="text-gray-400 text-xs font-bold flex flex-col items-center">
         <span>📋</span> स्क्वाड
       </button>
-      <button onclick="switchTab('tabTeams')" class="text-gray-400 text-xs font-bold flex flex-col items-center">
+      <button onclick="checkAdminAndSwitch('tabTeams')" class="text-gray-400 text-xs font-bold flex flex-col items-center">
         <span>⚖️</span> टीमें
       </button>
     </div>
@@ -227,7 +386,10 @@
     const db = getDatabase(app);
 
     let allPlayersCache = [];
+    let compressedPhotoBase64 = "";
+    let isAdminLoggedIn = false; // Admin status tracker
 
+    // Tab Navigation Helper
     window.switchTab = function(tabName) {
       document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
       if(tabName === 'tabDashboard') document.getElementById('viewDashboard').classList.remove('hidden');
@@ -240,8 +402,112 @@
       window.scrollTo(0, 0);
     };
 
+    // Admin Authentication Check for Protected Tabs
+    window.checkAdminAndSwitch = function(tabName) {
+      if(isAdminLoggedIn) {
+        window.switchTab(tabName);
+      } else {
+        let pass = prompt('यह एडमिन एरिया है। पासवर्ड दर्ज करें:');
+        if(pass === '1234') { // एडमिन पासवर्ड
+          isAdminLoggedIn = true;
+          updateAdminBadge();
+          window.switchTab(tabName);
+          alert('🔑 एडमिन एक्सेस सफल!');
+        } else if(pass !== null) {
+          alert('❌ गलत पासवर्ड! एक्सेस अस्वीकृत।');
+        }
+      }
+    };
+
+    window.toggleAdminMode = function() {
+      if(isAdminLoggedIn) {
+        if(confirm('क्या आप एडमिन मोड से लॉग आउट करना चाहते हैं?')) {
+          isAdminLoggedIn = false;
+          updateAdminBadge();
+          window.switchTab('tabDashboard');
+        }
+      } else {
+        let pass = prompt('एडमिन पासवर्ड दर्ज करें:');
+        if(pass === '1234') {
+          isAdminLoggedIn = true;
+          updateAdminBadge();
+          alert('🔑 एडमिन मोड एक्टिव हो गया!');
+        } else if(pass !== null) {
+          alert('❌ गलत पासवर्ड!');
+        }
+      }
+    };
+
+    function updateAdminBadge() {
+      const btn = document.getElementById('adminBadgeBtn');
+      if(isAdminLoggedIn) {
+        btn.className = 'text-[10px] font-bold px-2.5 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        btn.innerText = '🔓 Admin Active';
+      } else {
+        btn.className = 'text-[10px] font-bold px-2.5 py-1 rounded-xl bg-gray-800 text-gray-300 border border-gray-700';
+        btn.innerText = '🔒 Viewer Mode';
+      }
+    }
+
+    // Photo Compression Helper
+    window.handlePhotoCompression = function(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 300;
+
+          if(width > height && width > maxDim) {
+            height *= maxDim / width;
+            width = maxDim;
+          } else if(height > maxDim) {
+            width *= maxDim / height;
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          compressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          
+          const preview = document.getElementById('avatarImgPreview');
+          preview.src = compressedPhotoBase64;
+          preview.classList.remove('hidden');
+          document.getElementById('defaultAvatarIcon').classList.add('hidden');
+          document.getElementById('btnRemovePhoto').classList.remove('hidden');
+        }
+        img.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    };
+
+    window.clearAvatarPhoto = function() {
+      compressedPhotoBase64 = "";
+      document.getElementById('avatarImgPreview').src = "";
+      document.getElementById('avatarImgPreview').classList.add('hidden');
+      document.getElementById('defaultAvatarIcon').classList.remove('hidden');
+      document.getElementById('btnRemovePhoto').classList.add('hidden');
+      document.getElementById('playerPhotoInput').value = "";
+    };
+
+    // Handle Player Form Submit & Save to Firebase Database
     window.handlePlayerSubmit = function(event) {
       event.preventDefault();
+      
+      if(!isAdminLoggedIn) {
+        alert('त्रुटि: केवल एडमिन ही नया खिलाड़ी जोड़ सकता है!');
+        return;
+      }
+
       const name = document.getElementById('playerName').value.trim();
       const role = document.getElementById('playerRole').value;
 
@@ -253,24 +519,41 @@
       set(newPlayerRef, {
         name: name,
         role: role,
+        photo: compressedPhotoBase64 || "",
         team: 'none',
         timestamp: Date.now()
       }).then(() => {
-        alert('🎉 खिलाड़ी सफलतापूर्वक रजिस्टर हो गया!');
+        alert('🎉 खिलाड़ी सफलतापूर्वक क्लाउड पर रजिस्टर हो गया!');
         document.getElementById('playerRegForm').reset();
+        clearAvatarPhoto();
         window.switchTab('tabSquad');
       }).catch((error) => {
         alert('त्रुटि: ' + error.message);
       });
     };
 
+    // Delete Player with PIN / Password Protection
     window.deletePlayer = function(id) {
-      if(confirm('क्या आप इस खिलाड़ी को हटाना चाहते हैं?')) {
+      if(!isAdminLoggedIn) {
+        let pass = prompt('खिलाड़ी हटाने के लिए एडमिन पासवर्ड दर्ज करें:');
+        if(pass === '1234') {
+          isAdminLoggedIn = true;
+          updateAdminBadge();
+        } else {
+          alert('गलत पासवर्ड! खिलाड़ी नहीं हटाया गया।');
+          return;
+        }
+      }
+
+      if(confirm('क्या आप वाकई इस खिलाड़ी को हटाना चाहते हैं?')) {
         remove(ref(db, 'royal_arena_players/' + id));
+        alert('खिलाड़ी सफलतापूर्वक हटा दिया गया है।');
       }
     };
 
+    // Assign Team Manually
     window.setPlayerTeam = function(id, targetTeam) {
+      if(!isAdminLoggedIn) return alert('केवल एडमिन टीम बदल सकता है!');
       update(ref(db, 'royal_arena_players/' + id), { team: targetTeam });
     };
 
@@ -281,6 +564,27 @@
       document.getElementById('displayTeam2Title').innerText = t2;
     }
 
+    // Digital Pass Modal (Public Accessible)
+    window.openDigitalPass = function(name, role, photo, id) {
+      document.getElementById('passModalName').innerText = name;
+      document.getElementById('passModalRole').innerText = role;
+      document.getElementById('passModalId').innerText = 'RA-' + id.slice(-4).toUpperCase();
+      
+      const avatarBox = document.getElementById('passModalAvatar');
+      if(photo) {
+        avatarBox.innerHTML = `<img src="${photo}" class="w-full h-full object-cover">`;
+      } else {
+        avatarBox.innerHTML = '👤';
+      }
+
+      document.getElementById('digitalPassModal').classList.remove('hidden');
+    };
+
+    window.closeDigitalPass = function() {
+      document.getElementById('digitalPassModal').classList.add('hidden');
+    };
+
+    // Render Manual Teams UI
     function renderManualTeamsUI() {
       const manualListContainer = document.getElementById('manualPlayersList');
       const teamAListContainer = document.getElementById('teamAList');
@@ -328,32 +632,43 @@
       teamBListContainer.innerHTML = teamBHTML || '<li class="text-gray-500 italic">कोई खिलाड़ी नहीं</li>';
     }
 
+    // Realtime Listener to Fetch and Display Players & Stats
     const playersRef = ref(db, 'royal_arena_players');
     onValue(playersRef, (snapshot) => {
       const data = snapshot.val();
       const listContainer = document.getElementById('playersListContainer');
       
-      let total = 0;
+      let total = 0, batsman = 0, bowler = 0, allRounder = 0;
       listContainer.innerHTML = '';
       allPlayersCache = [];
 
       if (data) {
-        const playersArray = Object.entries(data).reverse();
+        const playersArray = Object.entries(data).reverse(); // Latest first
         total = playersArray.length;
 
         playersArray.forEach(([id, player]) => {
           allPlayersCache.push({ id, ...player });
 
+          if(player.role.includes('बल्लेबाज़')) batsman++;
+          else if(player.role.includes('गेंदबाज़')) bowler++;
+          else if(player.role.includes('ऑल-राउंडर')) allRounder++;
+
           const item = document.createElement('div');
           item.className = 'bg-royal-surfaceDark p-3 rounded-2xl border border-gray-700/60 flex items-center justify-between text-xs';
+          
+          let photoHtml = player.photo ? `<img src="${player.photo}" class="w-10 h-10 rounded-xl object-cover border border-amber-400/50 flex-shrink-0">` : `<div class="w-10 h-10 rounded-xl bg-royal-cardDark border border-gray-700 flex items-center justify-center text-base flex-shrink-0">👤</div>`;
+
           item.innerHTML = `
-            <div>
-              <span class="font-bold text-white text-sm">${player.name}</span>
-              <span class="block text-[10px] text-amber-400 mt-0.5">${player.role}</span>
+            <div class="flex items-center gap-2.5">
+              ${photoHtml}
+              <div>
+                <span class="font-bold text-white text-sm">${player.name}</span>
+                <span class="block text-[10px] text-amber-400 mt-0.5">${player.role}</span>
+              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] bg-emerald-500/15 text-emerald-300 px-2 py-1 rounded-lg border border-emerald-500/30">Synced</span>
-              <button onclick="deletePlayer('${id}')" class="text-red-400 p-1">🗑️</button>
+            <div class="flex items-center gap-1.5">
+              <button onclick="openDigitalPass('${player.name.replace(/'/g, "\\'")}', '${player.role.replace(/'/g, "\\'")}', '${player.photo || ''}', '${id}')" class="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-[10px] font-bold">पास</button>
+              <button onclick="deletePlayer('${id}')" class="text-red-400 p-1 hover:text-red-300">🗑️</button>
             </div>
           `;
           listContainer.appendChild(item);
@@ -362,7 +677,11 @@
         listContainer.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">अभी कोई खिलाड़ी पंजीकृत नहीं है।</p>';
       }
 
+      // Update Stats on Dashboard
       document.getElementById('statTotal').innerText = total;
+      document.getElementById('statBatsman').innerText = batsman;
+      document.getElementById('statBowler').innerText = bowler;
+      document.getElementById('statAllRounder').innerText = allRounder;
 
       if(!document.getElementById('viewTeams').classList.contains('hidden')) {
         renderManualTeamsUI();
